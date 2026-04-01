@@ -1,80 +1,92 @@
-import type { Team, Bundle } from "./types"
+import type { UseCaseGroup, Category, Bundle } from "./types"
 
-export const teams: Team[] = [
+// ── Global Categories (deduplicated, grouped by use-case) ──
+
+export const categories: Category[] = [
+  // Writing & Communication
+  { id: "outreach", name: "Outreach", groupId: "writing" },
+  { id: "proposals", name: "Proposals", groupId: "writing" },
+  { id: "follow-up", name: "Follow-Up", groupId: "writing" },
+  { id: "check-in", name: "Check-In Messaging", groupId: "writing" },
+  { id: "social-media", name: "Social Media", groupId: "writing" },
+  { id: "objection-handling", name: "Objection Handling", groupId: "writing" },
+
+  // Analysis & Research
+  { id: "competitive-analysis", name: "Competitive Analysis", groupId: "analysis" },
+  { id: "lead-qualification", name: "Lead Qualification", groupId: "analysis" },
+  { id: "data-analysis", name: "Data Analysis", groupId: "analysis" },
+
+  // Customer Operations
+  { id: "ticket-response", name: "Ticket Response", groupId: "customer-ops" },
+  { id: "onboarding", name: "Onboarding", groupId: "customer-ops" },
+  { id: "churn-prevention", name: "Churn Prevention", groupId: "customer-ops" },
+  { id: "escalation", name: "Escalation", groupId: "customer-ops" },
+  { id: "qbr-prep", name: "QBR Prep", groupId: "customer-ops" },
+
+  // Development & Technical
+  { id: "code-review", name: "Code Review", groupId: "development" },
+  { id: "debugging", name: "Debugging", groupId: "development" },
+  { id: "documentation", name: "Documentation", groupId: "development" },
+  { id: "architecture", name: "Architecture", groupId: "development" },
+  { id: "test-cases", name: "Test Cases", groupId: "development" },
+  { id: "bug-reports", name: "Bug Reports", groupId: "development" },
+
+  // Planning & Strategy
+  { id: "prds", name: "PRDs", groupId: "planning" },
+  { id: "user-stories", name: "User Stories", groupId: "planning" },
+  { id: "release-notes", name: "Release Notes", groupId: "planning" },
+  { id: "setup-guides", name: "Setup Guides", groupId: "planning" },
+  { id: "migration", name: "Migration", groupId: "planning" },
+
+  // Content & Marketing
+  { id: "blog-posts", name: "Blog Posts", groupId: "content" },
+  { id: "campaign-briefs", name: "Campaign Briefs", groupId: "content" },
+  { id: "seo", name: "SEO", groupId: "content" },
+  { id: "training-materials", name: "Training Materials", groupId: "content" },
+]
+
+// ── Use-Case Groups (sidebar navigation) ──
+
+export const useCaseGroups: UseCaseGroup[] = [
   {
-    id: "sales",
-    name: "Sales",
-    icon: "TrendingUp",
-    categories: [
-      { id: "sales-outreach", name: "Outreach", teamId: "sales" },
-      { id: "sales-objection", name: "Objection Handling", teamId: "sales" },
-      { id: "sales-proposals", name: "Proposals", teamId: "sales" },
-      { id: "sales-qualification", name: "Lead Qualification", teamId: "sales" },
-      { id: "sales-competitive", name: "Competitive Analysis", teamId: "sales" },
-    ],
+    id: "writing",
+    name: "Writing & Communication",
+    icon: "PenLine",
+    categoryIds: ["outreach", "proposals", "follow-up", "check-in", "social-media", "objection-handling"],
   },
   {
-    id: "cs",
-    name: "Customer Success",
-    icon: "HeartHandshake",
-    categories: [
-      { id: "cs-tickets", name: "Ticket Responses", teamId: "cs" },
-      { id: "cs-onboarding", name: "Onboarding", teamId: "cs" },
-      { id: "cs-churn", name: "Churn Prevention", teamId: "cs" },
-      { id: "cs-checkin", name: "Check-ins", teamId: "cs" },
-      { id: "cs-escalation", name: "Escalation", teamId: "cs" },
-    ],
+    id: "analysis",
+    name: "Analysis & Research",
+    icon: "BarChart3",
+    categoryIds: ["competitive-analysis", "lead-qualification", "data-analysis"],
   },
   {
-    id: "implementation",
-    name: "Implementation",
-    icon: "Settings",
-    categories: [
-      { id: "impl-setup", name: "Setup Guides", teamId: "implementation" },
-      { id: "impl-migration", name: "Migration", teamId: "implementation" },
-    ],
+    id: "customer-ops",
+    name: "Customer Operations",
+    icon: "Headphones",
+    categoryIds: ["ticket-response", "onboarding", "churn-prevention", "escalation", "qbr-prep"],
   },
   {
-    id: "engineering",
-    name: "Engineering",
+    id: "development",
+    name: "Development & Technical",
     icon: "Code",
-    categories: [
-      { id: "eng-review", name: "Code Review", teamId: "engineering" },
-      { id: "eng-docs", name: "Documentation", teamId: "engineering" },
-      { id: "eng-debug", name: "Debugging", teamId: "engineering" },
-      { id: "eng-architecture", name: "Architecture", teamId: "engineering" },
-    ],
+    categoryIds: ["code-review", "debugging", "documentation", "architecture", "test-cases", "bug-reports"],
   },
   {
-    id: "product",
-    name: "Product",
-    icon: "Lightbulb",
-    categories: [
-      { id: "prod-prd", name: "PRDs", teamId: "product" },
-      { id: "prod-stories", name: "User Stories", teamId: "product" },
-      { id: "prod-releases", name: "Release Notes", teamId: "product" },
-      { id: "prod-competitive", name: "Competitive Analysis", teamId: "product" },
-    ],
+    id: "planning",
+    name: "Planning & Strategy",
+    icon: "Target",
+    categoryIds: ["prds", "user-stories", "release-notes", "setup-guides", "migration"],
   },
   {
-    id: "marketing",
-    name: "Marketing",
-    icon: "Megaphone",
-    categories: [
-      { id: "mkt-content", name: "Content", teamId: "marketing" },
-      { id: "mkt-social", name: "Social Media", teamId: "marketing" },
-    ],
-  },
-  {
-    id: "qa",
-    name: "QA",
-    icon: "ShieldCheck",
-    categories: [
-      { id: "qa-testcases", name: "Test Cases", teamId: "qa" },
-      { id: "qa-bugs", name: "Bug Reports", teamId: "qa" },
-    ],
+    id: "content",
+    name: "Content & Marketing",
+    icon: "Palette",
+    categoryIds: ["blog-posts", "campaign-briefs", "seo", "training-materials"],
   },
 ]
+
+// ── Bundles ──
 
 export const bundles: Bundle[] = [
   {
@@ -85,10 +97,18 @@ export const bundles: Bundle[] = [
   },
 ]
 
-export function getTeamById(id: string): Team | undefined {
-  return teams.find((t) => t.id === id)
+// ── Helpers ──
+
+export function getGroupById(id: string): UseCaseGroup | undefined {
+  return useCaseGroups.find((g) => g.id === id)
 }
 
-export function getCategoriesForTeam(teamId: string): Team["categories"] {
-  return teams.find((t) => t.id === teamId)?.categories ?? []
+export function getCategoriesForGroup(groupId: string): Category[] {
+  const group = useCaseGroups.find((g) => g.id === groupId)
+  if (!group) return []
+  return categories.filter((c) => group.categoryIds.includes(c.id))
+}
+
+export function getCategoryById(id: string): Category | undefined {
+  return categories.find((c) => c.id === id)
 }

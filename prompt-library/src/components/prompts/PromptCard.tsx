@@ -5,9 +5,10 @@ import { Copy, Heart, TrendingUp, Clock } from "lucide-react"
 import { modelColors } from "@/lib/constants"
 import type { Prompt } from "@/data/types"
 
+const MAX_VISIBLE_DEPTS = 2
+
 interface PromptCardProps {
   prompt: Prompt
-  teamName: string
   onCopy: () => void
   onClick: () => void
   isFavorite: boolean
@@ -16,13 +17,14 @@ interface PromptCardProps {
 
 export function PromptCard({
   prompt,
-  teamName,
   onCopy,
   onClick,
   isFavorite,
   onToggleFavorite,
 }: PromptCardProps) {
   const hasVariables = prompt.variables.length > 0
+  const visibleDepts = prompt.departments.slice(0, MAX_VISIBLE_DEPTS)
+  const overflowCount = prompt.departments.length - MAX_VISIBLE_DEPTS
 
   return (
     <Card
@@ -42,9 +44,16 @@ export function PromptCard({
                   {model}
                 </Badge>
               ))}
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                {teamName}
-              </Badge>
+              {visibleDepts.map((dept) => (
+                <Badge key={dept} variant="outline" className="text-[10px] px-1.5 py-0">
+                  {dept}
+                </Badge>
+              ))}
+              {overflowCount > 0 && (
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">
+                  +{overflowCount} more
+                </Badge>
+              )}
               {prompt.status === "pending" && (
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-yellow-500 text-yellow-600 dark:text-yellow-400">
                   <Clock className="h-2.5 w-2.5 mr-0.5" />
@@ -68,7 +77,8 @@ export function PromptCard({
       </CardHeader>
 
       <CardContent className="flex-1 pb-3">
-        <p className="text-sm text-muted-foreground line-clamp-3">{prompt.description}</p>
+        <p className="text-sm text-muted-foreground line-clamp-3">{prompt.overview}</p>
+        <span className="text-xs text-primary mt-1 inline-block hover:underline">Read more</span>
       </CardContent>
 
       <CardFooter className="flex items-center justify-between pt-0">
@@ -82,7 +92,6 @@ export function PromptCard({
             </Badge>
           )}
         </div>
-        {/* Only show Copy on cards without variables — cards with variables require the drawer to fill in */}
         {!hasVariables && (
           <Button
             size="sm"

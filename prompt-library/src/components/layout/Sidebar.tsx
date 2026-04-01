@@ -2,35 +2,33 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { teams } from "@/data/teams"
+import { useCaseGroups } from "@/data/teams"
 import {
   Library,
   Heart,
   Plus,
   ChevronLeft,
   ChevronRight,
-  TrendingUp,
-  HeartHandshake,
-  Settings,
+  PenLine,
+  BarChart3,
+  Headphones,
   Code,
-  Lightbulb,
-  Megaphone,
-  ShieldCheck,
+  Target,
+  Palette,
 } from "lucide-react"
 
 const iconMap: Record<string, React.ElementType> = {
-  TrendingUp,
-  HeartHandshake,
-  Settings,
+  PenLine,
+  BarChart3,
+  Headphones,
   Code,
-  Lightbulb,
-  Megaphone,
-  ShieldCheck,
+  Target,
+  Palette,
 }
 
 interface SidebarProps {
-  selectedTeam: string | null
-  onSelectTeam: (teamId: string | null) => void
+  selectedGroup: string | null
+  onSelectGroup: (groupId: string | null) => void
   showFavorites: boolean
   onShowFavorites: () => void
   collapsed: boolean
@@ -39,8 +37,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  selectedTeam,
-  onSelectTeam,
+  selectedGroup,
+  onSelectGroup,
   showFavorites,
   onShowFavorites,
   collapsed,
@@ -76,12 +74,12 @@ export function Sidebar({
         <div className="p-2 space-y-1">
           {/* All Prompts */}
           <Button
-            variant={selectedTeam === null && !showFavorites ? "secondary" : "ghost"}
+            variant={selectedGroup === null && !showFavorites ? "secondary" : "ghost"}
             className={cn(
               "w-full justify-start cursor-pointer",
               collapsed && "justify-center px-2"
             )}
-            onClick={() => onSelectTeam(null)}
+            onClick={() => onSelectGroup(null)}
           >
             <Library className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="ml-2">All Prompts</span>}
@@ -89,21 +87,21 @@ export function Sidebar({
 
           <Separator className="my-2" />
 
-          {/* Teams */}
-          {teams.map((team) => {
-            const Icon = iconMap[team.icon] ?? Library
+          {/* Use-Case Groups */}
+          {useCaseGroups.map((group) => {
+            const Icon = iconMap[group.icon] ?? Library
             return (
               <Button
-                key={team.id}
-                variant={selectedTeam === team.id ? "secondary" : "ghost"}
+                key={group.id}
+                variant={selectedGroup === group.id ? "secondary" : "ghost"}
                 className={cn(
                   "w-full justify-start cursor-pointer",
                   collapsed && "justify-center px-2"
                 )}
-                onClick={() => onSelectTeam(team.id)}
+                onClick={() => onSelectGroup(group.id)}
               >
                 <Icon className="h-4 w-4 shrink-0" />
-                {!collapsed && <span className="ml-2">{team.name}</span>}
+                {!collapsed && <span className="ml-2 truncate">{group.name}</span>}
               </Button>
             )
           })}

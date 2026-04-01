@@ -11,9 +11,10 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { teams } from "@/data/teams"
+import { useCaseGroups, categories } from "@/data/teams"
+import { DEPARTMENTS } from "@/data/types"
 import { extractVariables } from "@/lib/variables"
-import type { ModelType } from "@/data/types"
+import type { ModelType, Department } from "@/data/types"
 
 const allModels: ModelType[] = ["ChatGPT", "Claude", "Gemini", "Model-Agnostic"]
 
@@ -24,9 +25,9 @@ interface SubmitPromptProps {
 
 export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
   const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
+  const [overview, setOverview] = useState("")
   const [promptText, setPromptText] = useState("")
-  const [teamId, setTeamId] = useState("")
+  const [departments, setDepartments] = useState<Department[]>([])
   const [categoryId, setCategoryId] = useState("")
   const [selectedModels, setSelectedModels] = useState<ModelType[]>([])
 
@@ -38,26 +39,30 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
     )
   }
 
-  const canSubmit = title.trim() !== "" && promptText.trim() !== "" && teamId !== ""
+  const toggleDepartment = (dept: Department) => {
+    setDepartments((prev) =>
+      prev.includes(dept) ? prev.filter((d) => d !== dept) : [...prev, dept]
+    )
+  }
+
+  const canSubmit =
+    title.trim() !== "" &&
+    promptText.trim() !== "" &&
+    overview.trim() !== "" &&
+    departments.length > 0 &&
+    categoryId !== ""
 
   const handleSubmit = () => {
     if (!canSubmit) return
     toast.success("Prompt submitted for review!")
     setTitle("")
-    setDescription("")
+    setOverview("")
     setPromptText("")
-    setTeamId("")
+    setDepartments([])
     setCategoryId("")
     setSelectedModels([])
     onOpenChange(false)
   }
-
-  const handleTeamChange = (newTeamId: string) => {
-    setTeamId(newTeamId)
-    setCategoryId("") // reset category when team changes
-  }
-
-  const selectedTeam = teams.find((t) => t.id === teamId)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -78,12 +83,12 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Description</label>
-            <Input
-              className="mt-1"
-              placeholder="What does this prompt do and when should it be used?"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+            <label className="text-sm font-medium">Overview</label>
+            <textarea
+              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              placeholder="2-4 sentences: what this prompt does, when to use it, and what kind of output to expect."
+              value={overview}
+              onChange={(e) => setOverview(e.target.value)}
             />
           </div>
 
@@ -110,38 +115,44 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
           <Separator />
 
           <div>
-            <label className="text-sm font-medium">Team</label>
+            <label className="text-sm font-medium">Departments</label>
+            <p className="text-xs text-muted-foreground mt-0.5 mb-1.5">Select all that apply</p>
+            <div className="flex flex-wrap gap-2">
+              {DEPARTMENTS.map((dept) => (
+                <Button
+                  key={dept}
+                  variant={departments.includes(dept) ? "default" : "outline"}
+                  size="sm"
+                  className="cursor-pointer text-xs"
+                  onClick={() => toggleDepartment(dept)}
+                >
+                  {dept}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Category</label>
             <select
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              value={teamId}
-              onChange={(e) => handleTeamChange(e.target.value)}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
             >
-              <option value="">Select team...</option>
-              {teams.map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.name}
-                </option>
+              <option value="">Select category...</option>
+              {useCaseGroups.map((group) => (
+                <optgroup key={group.id} label={group.name}>
+                  {categories
+                    .filter((c) => group.categoryIds.includes(c.id))
+                    .map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </optgroup>
               ))}
             </select>
           </div>
-
-          {selectedTeam && (
-            <div>
-              <label className="text-sm font-medium">Category</label>
-              <select
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-              >
-                <option value="">Select category...</option>
-                {selectedTeam.categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
 
           <div>
             <label className="text-sm font-medium">Models</label>

@@ -2,6 +2,18 @@ export type ModelType = "ChatGPT" | "Claude" | "Gemini" | "Model-Agnostic"
 
 export type PromptStatus = "approved" | "pending"
 
+export const DEPARTMENTS = [
+  "Sales",
+  "Customer Success",
+  "Implementation",
+  "Engineering",
+  "Product",
+  "Marketing",
+  "QA",
+] as const
+
+export type Department = (typeof DEPARTMENTS)[number]
+
 export interface Variable {
   name: string
   description: string
@@ -10,14 +22,14 @@ export interface Variable {
 export interface Category {
   id: string
   name: string
-  teamId: string
+  groupId: string
 }
 
-export interface Team {
+export interface UseCaseGroup {
   id: string
   name: string
   icon: string
-  categories: Category[]
+  categoryIds: string[]
 }
 
 export interface VersionEntry {
@@ -37,9 +49,9 @@ export interface Bundle {
 export interface Prompt {
   id: string
   title: string
-  description: string
+  overview: string
   promptText: string
-  teamId: string
+  departments: Department[]
   categoryId: string
   models: ModelType[]
   variables: Variable[]

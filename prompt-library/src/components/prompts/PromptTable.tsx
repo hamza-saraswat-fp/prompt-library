@@ -10,31 +10,23 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Copy, TrendingUp, Clock } from "lucide-react"
 import { modelColors } from "@/lib/constants"
-import type { Prompt, Team } from "@/data/types"
+import { getCategoryById } from "@/data/teams"
+import type { Prompt } from "@/data/types"
 
 interface PromptTableProps {
   prompts: Prompt[]
-  teams: Team[]
   onCopy: (prompt: Prompt) => void
   onClick: (prompt: Prompt) => void
 }
 
-export function PromptTable({ prompts, teams, onCopy, onClick }: PromptTableProps) {
-  const getTeamName = (teamId: string) =>
-    teams.find((t) => t.id === teamId)?.name ?? teamId
-
-  const getCategoryName = (prompt: Prompt) => {
-    const team = teams.find((t) => t.id === prompt.teamId)
-    return team?.categories.find((c) => c.id === prompt.categoryId)?.name ?? ""
-  }
-
+export function PromptTable({ prompts, onCopy, onClick }: PromptTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[280px]">Title</TableHead>
-            <TableHead>Team</TableHead>
+            <TableHead>Departments</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Model</TableHead>
             <TableHead className="text-right">Copies</TableHead>
@@ -64,12 +56,21 @@ export function PromptTable({ prompts, teams, onCopy, onClick }: PromptTableProp
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant="outline" className="text-[10px]">
-                  {getTeamName(prompt.teamId)}
-                </Badge>
+                <div className="flex flex-wrap gap-1">
+                  {prompt.departments.slice(0, 2).map((dept) => (
+                    <Badge key={dept} variant="outline" className="text-[10px]">
+                      {dept}
+                    </Badge>
+                  ))}
+                  {prompt.departments.length > 2 && (
+                    <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                      +{prompt.departments.length - 2}
+                    </Badge>
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">
-                {getCategoryName(prompt)}
+                {getCategoryById(prompt.categoryId)?.name ?? ""}
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">

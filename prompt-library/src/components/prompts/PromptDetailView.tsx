@@ -23,28 +23,24 @@ import type { Prompt } from "@/data/types"
 
 interface PromptDetailViewProps {
   prompt: Prompt
-  teamName: string
   bundleSiblings: Prompt[]
   onBack: () => void
   onCopy: (text: string) => void
   isFavorite: boolean
   onToggleFavorite: () => void
   onOpenPrompt: (prompt: Prompt) => void
-  getTeamName: (teamId: string) => string
   isPromptFavorite: (id: string) => boolean
   onTogglePromptFavorite: (id: string) => void
 }
 
 export function PromptDetailView({
   prompt,
-  teamName,
   bundleSiblings,
   onBack,
   onCopy,
   isFavorite,
   onToggleFavorite,
   onOpenPrompt,
-  getTeamName,
   isPromptFavorite,
   onTogglePromptFavorite,
 }: PromptDetailViewProps) {
@@ -89,9 +85,11 @@ export function PromptDetailView({
                 {model}
               </Badge>
             ))}
-            <Badge variant="outline" className="text-xs px-2 py-0.5">
-              {teamName}
-            </Badge>
+            {prompt.departments.map((dept) => (
+              <Badge key={dept} variant="outline" className="text-xs px-2 py-0.5">
+                {dept}
+              </Badge>
+            ))}
             {prompt.status === "pending" && (
               <Badge
                 variant="outline"
@@ -113,9 +111,9 @@ export function PromptDetailView({
         </button>
       </div>
 
-      {/* Description */}
+      {/* Overview */}
       <p className="text-base text-muted-foreground max-w-3xl">
-        {prompt.description}
+        {prompt.overview}
       </p>
 
       {/* Metadata bar */}
@@ -181,7 +179,6 @@ export function PromptDetailView({
           {/* Right: Variables + Preview */}
           <div className="lg:col-span-2">
             <div className="sticky top-6 space-y-6">
-              {/* Variable inputs */}
               <div>
                 <h2 className="text-lg font-semibold mb-4">Fill in Variables</h2>
                 <div className="space-y-3">
@@ -206,7 +203,6 @@ export function PromptDetailView({
                 </div>
               </div>
 
-              {/* Copy button */}
               <Button
                 className="w-full cursor-pointer"
                 onClick={() => onCopy(filledText)}
@@ -214,12 +210,10 @@ export function PromptDetailView({
                 <Copy className="h-4 w-4 mr-2" />
                 Copy Filled Prompt
               </Button>
-
             </div>
           </div>
         </div>
       ) : (
-        /* Single column — no variables */
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Prompt</h2>
@@ -239,7 +233,7 @@ export function PromptDetailView({
 
       <Separator />
 
-      {/* Version History — always expanded */}
+      {/* Version History */}
       <div>
         <h2 className="text-lg font-semibold mb-4">Version History</h2>
         <div className="space-y-4 max-w-2xl">
@@ -283,7 +277,6 @@ export function PromptDetailView({
                 <PromptCard
                   key={sibling.id}
                   prompt={sibling}
-                  teamName={getTeamName(sibling.teamId)}
                   onCopy={() => onCopy(sibling.promptText)}
                   onClick={() => onOpenPrompt(sibling)}
                   isFavorite={isPromptFavorite(sibling.id)}
