@@ -1,11 +1,11 @@
 import type { Prompt } from "./types"
 
 export const prompts: Prompt[] = [
-  // ── Sales (6 prompts) ──────────────────────────────────
+  // ── Writing & Communication ──────────────────────────────
   {
     id: "sales-1",
     title: "Cold Outreach Email",
-    description: "Generate a personalized cold outreach email for a field service business owner based on their industry and pain points.",
+    overview: "Generate a personalized cold outreach email for a field service business owner. The prompt produces a concise, conversational email (under 150 words) that references the prospect's industry and specific pain points, ending with a soft call-to-action rather than a hard sell.",
     promptText: `You are a sales representative at FieldPulse, a field service management software company. Write a cold outreach email to {{prospect_name}}, who is the owner of {{company_name}}, a {{industry_type}} business.
 
 Their likely pain points include scheduling inefficiencies, missed appointments, and difficulty tracking job costs.
@@ -18,8 +18,8 @@ The email should:
 - Sound human and conversational, not corporate
 
 Tone: Friendly, knowledgeable, peer-to-peer.`,
-    teamId: "sales",
-    categoryId: "sales-outreach",
+    departments: ["Sales"],
+    categoryId: "outreach",
     models: ["Claude", "ChatGPT"],
     variables: [
       { name: "prospect_name", description: "Name of the prospect" },
@@ -42,7 +42,7 @@ Tone: Friendly, knowledgeable, peer-to-peer.`,
   {
     id: "sales-2",
     title: "Objection Handler: Price Too High",
-    description: "Generate a response to the common 'your price is too high' objection during a sales call.",
+    overview: "Generate a conversational response to the common 'your price is too high' sales objection. The AI acts as a sales coach, reframing cost as ROI with industry-specific examples and a follow-up question to uncover the real concern. Best used during or immediately after a call.",
     promptText: `A prospect just told me that FieldPulse is too expensive compared to {{competitor_name}}. Help me respond to this objection.
 
 Context:
@@ -55,8 +55,8 @@ Generate a conversational response that:
 2. Reframes the cost in terms of ROI (time saved, revenue recovered from missed jobs)
 3. Uses a specific example relevant to {{industry_type}} businesses
 4. Asks a follow-up question to understand their real concern`,
-    teamId: "sales",
-    categoryId: "sales-objection",
+    departments: ["Sales"],
+    categoryId: "objection-handling",
     models: ["Claude"],
     variables: [
       { name: "competitor_name", description: "The competitor they're comparing against" },
@@ -80,7 +80,7 @@ Generate a conversational response that:
   {
     id: "sales-3",
     title: "Proposal Executive Summary",
-    description: "Create a concise executive summary for a FieldPulse sales proposal.",
+    overview: "Create a polished executive summary for a FieldPulse sales proposal. Produces 3-4 professional paragraphs covering business understanding, solution mapping, expected ROI, and next steps. Written for business owners, not technical audiences.",
     promptText: `Write an executive summary for a FieldPulse proposal to {{company_name}}.
 
 Company details:
@@ -95,8 +95,8 @@ The summary should be 3-4 paragraphs covering:
 4. Recommended next steps
 
 Keep it professional but avoid jargon. Write for a business owner, not a technical audience.`,
-    teamId: "sales",
-    categoryId: "sales-proposals",
+    departments: ["Sales"],
+    categoryId: "proposals",
     models: ["Claude", "ChatGPT"],
     variables: [
       { name: "company_name", description: "Client company name" },
@@ -118,7 +118,7 @@ Keep it professional but avoid jargon. Write for a business owner, not a technic
   {
     id: "sales-4",
     title: "Lead Qualification Questions",
-    description: "Generate a list of qualification questions for a discovery call based on the prospect's industry.",
+    overview: "Generate 8-10 discovery call questions tailored to a prospect's industry and team size. Questions progress from rapport-building to probing, covering current workflow, pain points, decision process, and budget. Designed to feel conversational, not like an interrogation.",
     promptText: `Generate 8-10 discovery call questions for a {{industry_type}} business that has {{team_size}} employees.
 
 The questions should help me understand:
@@ -128,8 +128,8 @@ The questions should help me understand:
 - Budget expectations
 
 Order the questions from easy/rapport-building to more probing. Each question should feel conversational, not like an interrogation.`,
-    teamId: "sales",
-    categoryId: "sales-qualification",
+    departments: ["Sales", "Customer Success"],
+    categoryId: "lead-qualification",
     models: ["ChatGPT", "Claude"],
     variables: [
       { name: "industry_type", description: "Prospect's industry" },
@@ -149,7 +149,7 @@ Order the questions from easy/rapport-building to more probing. Each question sh
   {
     id: "sales-5",
     title: "Competitor Comparison Brief",
-    description: "Generate a comparison brief between FieldPulse and a competitor for use in sales conversations.",
+    overview: "Generate a fact-based comparison brief between FieldPulse and a competitor for sales conversations. Covers key differentiators, areas where the competitor appears stronger (with reframing), industry-specific talking points, and a killer question to highlight advantages.",
     promptText: `Create a brief comparison between FieldPulse and {{competitor_name}} for a {{industry_type}} business.
 
 Structure it as:
@@ -159,8 +159,8 @@ Structure it as:
 4. One killer question to ask the prospect that highlights our advantage
 
 Keep it factual and helpful, not trash-talking. The goal is to arm our sales team with honest, useful talking points.`,
-    teamId: "sales",
-    categoryId: "sales-competitive",
+    departments: ["Sales", "Product"],
+    categoryId: "competitive-analysis",
     models: ["Claude"],
     variables: [
       { name: "competitor_name", description: "The competitor to compare against" },
@@ -181,7 +181,7 @@ Keep it factual and helpful, not trash-talking. The goal is to arm our sales tea
   {
     id: "sales-6",
     title: "Follow-Up Email After Demo",
-    description: "Write a follow-up email after a product demo tailored to what was discussed.",
+    overview: "Write a personalized follow-up email after a product demo. Recaps features the prospect was excited about, proactively addresses their main concern, and confirms the agreed next step. Keeps it under 200 words and human-sounding.",
     promptText: `Write a follow-up email to {{prospect_name}} after a FieldPulse demo.
 
 During the demo, they were most interested in: {{key_features}}
@@ -194,8 +194,8 @@ The email should:
 - Address their concern proactively
 - Confirm the agreed next step with a specific date/time if possible
 - Be under 200 words`,
-    teamId: "sales",
-    categoryId: "sales-outreach",
+    departments: ["Sales", "Customer Success"],
+    categoryId: "follow-up",
     models: ["Model-Agnostic"],
     variables: [
       { name: "prospect_name", description: "Prospect's first name" },
@@ -215,11 +215,11 @@ The email should:
     ],
   },
 
-  // ── Customer Success (6 prompts) ──────────────────────
+  // ── Customer Operations ──────────────────────────────────
   {
     id: "cs-1",
     title: "Ticket Response: Feature Request",
-    description: "Respond to a customer feature request ticket with empathy and clear next steps.",
+    overview: "Respond to a customer feature request support ticket with empathy and clear next steps. Acknowledges the need, confirms the request is logged for the product team, provides workaround steps if available, and sets realistic expectations without promising timelines.",
     promptText: `A FieldPulse customer submitted a support ticket requesting a feature. Write a response.
 
 Customer name: {{customer_name}}
@@ -235,8 +235,8 @@ The response should:
 - End warmly
 
 Tone: Helpful, empathetic, professional.`,
-    teamId: "cs",
-    categoryId: "cs-tickets",
+    departments: ["Customer Success", "Product"],
+    categoryId: "ticket-response",
     models: ["Claude", "ChatGPT"],
     variables: [
       { name: "customer_name", description: "Customer's name" },
@@ -259,7 +259,7 @@ Tone: Helpful, empathetic, professional.`,
   {
     id: "cs-2",
     title: "Onboarding Welcome Email",
-    description: "Send a personalized welcome email to a new FieldPulse customer starting onboarding.",
+    overview: "Send a warm, personalized welcome email to a new FieldPulse customer. Covers what to expect in week one, suggests 3 quick wins before the onboarding call, and includes help doc placeholders. Part of the New Customer Onboarding bundle.",
     promptText: `Write a welcome email for {{customer_name}} at {{company_name}} who just signed up for FieldPulse.
 
 Their plan: {{plan_name}}
@@ -273,8 +273,8 @@ Include:
 - 3 quick wins they can do before the onboarding call
 - Link placeholders for help docs (use [Help Center] as placeholder)
 - Reminder about the onboarding call`,
-    teamId: "cs",
-    categoryId: "cs-onboarding",
+    departments: ["Customer Success", "Implementation"],
+    categoryId: "onboarding",
     models: ["Model-Agnostic"],
     variables: [
       { name: "customer_name", description: "New customer's name" },
@@ -301,7 +301,7 @@ Include:
   {
     id: "cs-3",
     title: "Onboarding Check-In (Day 7)",
-    description: "Week-one check-in email to ensure new customers are on track with setup.",
+    overview: "A week-one check-in email to ensure new customers are progressing with their setup. References their specific setup status, addresses known issues proactively, and suggests a targeted next step. Part of the New Customer Onboarding bundle.",
     promptText: `Write a day-7 check-in email for {{customer_name}} at {{company_name}}.
 
 Their setup progress: {{setup_status}}
@@ -313,8 +313,8 @@ The email should:
 - Address any known issues proactively
 - Suggest one next step based on where they are
 - Offer to hop on a quick call if they need help`,
-    teamId: "cs",
-    categoryId: "cs-onboarding",
+    departments: ["Customer Success", "Implementation"],
+    categoryId: "onboarding",
     models: ["Claude"],
     variables: [
       { name: "customer_name", description: "Customer name" },
@@ -337,15 +337,15 @@ The email should:
   {
     id: "cs-4",
     title: "Onboarding Completion Summary",
-    description: "Send a summary email at the end of the onboarding period with key resources.",
+    overview: "Send a completion email at the end of the onboarding period. Summarizes everything that was set up, lists any pending items with recommended timelines, and provides key ongoing resources. Part of the New Customer Onboarding bundle.",
     promptText: `Write an onboarding completion email for {{customer_name}} at {{company_name}}.
 
 Setup completed: {{completed_items}}
 Pending items: {{pending_items}}
 
 Congratulate them, summarize what was set up, list any pending items with recommended timelines, and provide key resources for ongoing success. End with an invitation to reach out anytime.`,
-    teamId: "cs",
-    categoryId: "cs-onboarding",
+    departments: ["Customer Success", "Implementation"],
+    categoryId: "onboarding",
     models: ["Model-Agnostic"],
     variables: [
       { name: "customer_name", description: "Customer name" },
@@ -368,7 +368,7 @@ Congratulate them, summarize what was set up, list any pending items with recomm
   {
     id: "cs-5",
     title: "Churn Risk Outreach",
-    description: "Proactive outreach email for customers showing signs of disengagement.",
+    overview: "Proactive re-engagement email for customers showing signs of disengagement. Written to feel genuinely personal and helpful — not like an automated retention email. Focuses on value they may be missing and suggests one high-impact action for their specific industry.",
     promptText: `Write a re-engagement email for {{customer_name}} at {{company_name}}.
 
 Warning signs: {{warning_signs}}
@@ -376,8 +376,8 @@ Last login: {{last_login_date}}
 Account health: {{health_score}}/100
 
 The email should feel personal and genuinely helpful, NOT like an automated retention email. Focus on value they might be missing, not on the fact that they haven't logged in. Suggest one specific action that would deliver immediate value for their {{industry_type}} business.`,
-    teamId: "cs",
-    categoryId: "cs-churn",
+    departments: ["Customer Success"],
+    categoryId: "churn-prevention",
     models: ["Claude"],
     variables: [
       { name: "customer_name", description: "Customer name" },
@@ -401,7 +401,7 @@ The email should feel personal and genuinely helpful, NOT like an automated rete
   {
     id: "cs-6",
     title: "QBR Prep Summary",
-    description: "Generate a quarterly business review preparation summary for a customer meeting.",
+    overview: "Generate a structured quarterly business review preparation summary. Takes key account metrics (jobs, users, features, tickets) and produces a presentation-ready summary with highlights, areas for improvement, recommended actions, and discussion questions.",
     promptText: `Prepare a QBR summary for {{company_name}}.
 
 Key metrics this quarter:
@@ -411,8 +411,8 @@ Key metrics this quarter:
 - Support tickets: {{ticket_count}}
 
 Generate a structured summary with: highlights, areas for improvement, recommended next steps, and 2-3 discussion questions for the meeting.`,
-    teamId: "cs",
-    categoryId: "cs-checkin",
+    departments: ["Customer Success", "Sales"],
+    categoryId: "qbr-prep",
     models: ["Claude", "Gemini"],
     variables: [
       { name: "company_name", description: "Customer company name" },
@@ -434,11 +434,11 @@ Generate a structured summary with: highlights, areas for improvement, recommend
     ],
   },
 
-  // ── Engineering (4 prompts) ───────────────────────────
+  // ── Development & Technical ──────────────────────────────
   {
     id: "eng-1",
     title: "Code Review Checklist",
-    description: "Generate a focused code review checklist based on the type of change being reviewed.",
+    overview: "Generate a focused, prioritized code review checklist tailored to the type of change being reviewed. Organizes items by priority (Critical, Important, Nice-to-have) covering security, performance, error handling, testing, and readability. Skips irrelevant items automatically.",
     promptText: `Generate a code review checklist for a {{change_type}} in our {{language}} codebase.
 
 The PR touches: {{affected_areas}}
@@ -451,8 +451,8 @@ Create a checklist organized by priority (Critical, Important, Nice-to-have) tha
 - Code style and readability
 
 Keep each item actionable and specific to the change type. Skip items that don't apply.`,
-    teamId: "engineering",
-    categoryId: "eng-review",
+    departments: ["Engineering"],
+    categoryId: "code-review",
     models: ["Claude"],
     variables: [
       { name: "change_type", description: "e.g., 'new API endpoint', 'database migration', 'UI component'" },
@@ -474,7 +474,7 @@ Keep each item actionable and specific to the change type. Skip items that don't
   {
     id: "eng-2",
     title: "API Documentation Generator",
-    description: "Generate API endpoint documentation from a code snippet or description.",
+    overview: "Generate complete REST API endpoint documentation from a code snippet or description. Produces method/path, parameter tables, response examples with JSON, error responses, and a curl command. Follows REST documentation best practices with precise types.",
     promptText: `Generate API documentation for the following endpoint:
 
 {{endpoint_description}}
@@ -488,8 +488,8 @@ Format the documentation with:
 - Example curl command
 
 Follow REST API documentation best practices. Be precise about types.`,
-    teamId: "engineering",
-    categoryId: "eng-docs",
+    departments: ["Engineering", "Product"],
+    categoryId: "documentation",
     models: ["Claude", "ChatGPT"],
     variables: [
       { name: "endpoint_description", description: "Paste the endpoint code or describe it" },
@@ -508,7 +508,7 @@ Follow REST API documentation best practices. Be precise about types.`,
   {
     id: "eng-3",
     title: "Debug Assistant",
-    description: "Help debug an issue by analyzing error messages, logs, and code context.",
+    overview: "Help debug an issue by analyzing error messages, logs, and code context. Walks through what the error means, ranks probable root causes by likelihood, provides step-by-step debugging instructions, and suggests fixes for each cause. Great for unblocking yourself quickly.",
     promptText: `Help me debug this issue:
 
 Error message: {{error_message}}
@@ -521,8 +521,8 @@ Walk me through:
 2. Most probable root causes (ranked by likelihood)
 3. Debugging steps to narrow it down
 4. Suggested fix for each probable cause`,
-    teamId: "engineering",
-    categoryId: "eng-debug",
+    departments: ["Engineering", "QA"],
+    categoryId: "debugging",
     models: ["Claude"],
     variables: [
       { name: "error_message", description: "The error message or stack trace" },
@@ -544,7 +544,7 @@ Walk me through:
   {
     id: "eng-4",
     title: "Architecture Decision Record",
-    description: "Draft an ADR for a technical decision that needs to be documented.",
+    overview: "Draft a concise Architecture Decision Record (ADR) for a technical decision. Produces a structured document with Status, Context, Decision, Consequences, and Alternatives Considered. Each section is kept to 2-4 sentences for readability.",
     promptText: `Draft an Architecture Decision Record (ADR) for the following decision:
 
 Decision: {{decision_title}}
@@ -559,8 +559,8 @@ Format as a standard ADR with sections:
 - Alternatives Considered
 
 Keep it concise. Each section should be 2-4 sentences max.`,
-    teamId: "engineering",
-    categoryId: "eng-architecture",
+    departments: ["Engineering", "Product"],
+    categoryId: "architecture",
     models: ["Claude"],
     variables: [
       { name: "decision_title", description: "What decision was made" },
@@ -579,11 +579,11 @@ Keep it concise. Each section should be 2-4 sentences max.`,
     ],
   },
 
-  // ── Product (4 prompts) ───────────────────────────────
+  // ── Planning & Strategy ──────────────────────────────────
   {
     id: "prod-1",
     title: "PRD Writer",
-    description: "Generate a structured product requirements document for a new feature.",
+    overview: "Generate a structured product requirements document for a new feature. Produces a focused, practical PRD with Problem Statement, Proposed Solution, User Stories, Acceptance Criteria, Out of Scope, and Open Questions. Designed for internal alignment, not external specs.",
     promptText: `Write a PRD for the following feature:
 
 Feature name: {{feature_name}}
@@ -600,8 +600,8 @@ Structure the PRD with:
 6. Open Questions
 
 Keep it focused and practical. This is for internal alignment, not an external spec.`,
-    teamId: "product",
-    categoryId: "prod-prd",
+    departments: ["Product", "Engineering"],
+    categoryId: "prds",
     models: ["Claude"],
     variables: [
       { name: "feature_name", description: "Name of the feature" },
@@ -624,7 +624,7 @@ Keep it focused and practical. This is for internal alignment, not an external s
   {
     id: "prod-2",
     title: "User Story Generator",
-    description: "Generate user stories with acceptance criteria from a feature description.",
+    overview: "Generate user stories with acceptance criteria from a feature description. Each story follows 'As a [role], I want [action] so that [benefit]' format with 3-5 acceptance criteria and edge cases. Stories are ordered by priority and focus on the user's perspective.",
     promptText: `Generate user stories for this feature: {{feature_description}}
 
 For each user story, provide:
@@ -633,8 +633,8 @@ For each user story, provide:
 - Edge cases to consider
 
 Generate {{story_count}} user stories, ordered by priority. Focus on the user's perspective, not implementation details.`,
-    teamId: "product",
-    categoryId: "prod-stories",
+    departments: ["Product", "Engineering"],
+    categoryId: "user-stories",
     models: ["Claude", "ChatGPT"],
     variables: [
       { name: "feature_description", description: "Describe the feature" },
@@ -654,7 +654,7 @@ Generate {{story_count}} user stories, ordered by priority. Focus on the user's 
   {
     id: "prod-3",
     title: "Release Notes Drafter",
-    description: "Draft customer-facing release notes from a list of changes.",
+    overview: "Draft customer-facing release notes from a list of changes. Groups changes by category (New Features, Improvements, Bug Fixes), uses simple non-technical language, and explains the benefit of each change rather than just what changed. Includes a brief intro paragraph.",
     promptText: `Draft release notes for FieldPulse version {{version_number}}.
 
 Changes included:
@@ -666,8 +666,8 @@ Write customer-facing release notes that:
 - Explain the benefit of each change, not just what changed
 - Are scannable with bullet points
 - Include a brief intro paragraph`,
-    teamId: "product",
-    categoryId: "prod-releases",
+    departments: ["Product", "Marketing"],
+    categoryId: "release-notes",
     models: ["Model-Agnostic"],
     variables: [
       { name: "version_number", description: "e.g., 4.2.0" },
@@ -687,7 +687,7 @@ Write customer-facing release notes that:
   {
     id: "prod-4",
     title: "Competitive Analysis Framework",
-    description: "Analyze a competitor's product against FieldPulse across key dimensions.",
+    overview: "Analyze a competitor's product against FieldPulse across key dimensions. Produces a structured comparison with feature tables, pricing analysis, strengths/weaknesses, market positioning differences, and strategic takeaways. Useful for sales enablement and product strategy.",
     promptText: `Create a competitive analysis comparing FieldPulse to {{competitor_name}}.
 
 Focus areas: {{focus_areas}}
@@ -699,8 +699,8 @@ Structure the analysis as:
 3. Strengths and weaknesses of each
 4. Market positioning differences
 5. Key takeaways for product strategy`,
-    teamId: "product",
-    categoryId: "prod-competitive",
+    departments: ["Product", "Sales"],
+    categoryId: "competitive-analysis",
     models: ["Claude", "Gemini"],
     variables: [
       { name: "competitor_name", description: "Competitor to analyze" },
@@ -718,12 +718,10 @@ Structure the analysis as:
       { version: 1, date: "2026-03-28", author: "Hamza Saraswat", changeDescription: "Initial version" },
     ],
   },
-
-  // ── Implementation (2 prompts) ────────────────────────
   {
     id: "impl-1",
     title: "Customer Setup Checklist",
-    description: "Generate a customized setup checklist for a new FieldPulse customer based on their configuration needs.",
+    overview: "Generate a customized implementation setup checklist phased by timeline (Day 1, Week 1, Week 2). Includes estimated time per task, industry-specific tips, and covers features and integrations. Useful for implementation managers starting a new customer engagement.",
     promptText: `Create a setup checklist for {{company_name}} implementing FieldPulse.
 
 Configuration needs:
@@ -733,8 +731,8 @@ Configuration needs:
 - Integrations needed: {{integrations}}
 
 Generate a step-by-step checklist grouped by phase (Day 1, Week 1, Week 2) with estimated time per task. Include tips specific to {{industry_type}} businesses.`,
-    teamId: "implementation",
-    categoryId: "impl-setup",
+    departments: ["Implementation", "Customer Success"],
+    categoryId: "setup-guides",
     models: ["Claude"],
     variables: [
       { name: "company_name", description: "Customer company" },
@@ -757,7 +755,7 @@ Generate a step-by-step checklist grouped by phase (Day 1, Week 1, Week 2) with 
   {
     id: "impl-2",
     title: "Data Migration Guide",
-    description: "Generate a data migration plan for customers switching from another tool to FieldPulse.",
+    overview: "Generate a complete data migration plan for customers switching from another tool to FieldPulse. Includes pre-migration checklist, step-by-step process, data mapping recommendations, validation steps, and a rollback plan. Tailored to the volume and types of data being moved.",
     promptText: `Create a data migration guide for {{company_name}} switching from {{previous_tool}} to FieldPulse.
 
 Data to migrate: {{data_types}}
@@ -770,8 +768,8 @@ Include:
 - Data mapping recommendations
 - Validation steps
 - Rollback plan`,
-    teamId: "implementation",
-    categoryId: "impl-migration",
+    departments: ["Implementation", "Engineering"],
+    categoryId: "migration",
     models: ["Claude"],
     variables: [
       { name: "company_name", description: "Customer company" },
@@ -792,11 +790,11 @@ Include:
     ],
   },
 
-  // ── Marketing (2 prompts) ─────────────────────────────
+  // ── Content & Marketing ──────────────────────────────────
   {
     id: "mkt-1",
     title: "Blog Post Outline",
-    description: "Generate a structured blog post outline for the FieldPulse blog.",
+    overview: "Generate a structured blog post outline for the FieldPulse blog. Produces 3 compelling title options, a hook/intro approach, section headings with bullet points, a CTA suggestion, and SEO keyword targets. Tailored to the specified audience and goal.",
     promptText: `Create a blog post outline for the FieldPulse blog.
 
 Topic: {{topic}}
@@ -810,8 +808,8 @@ Generate an outline with:
 - Section headings with 2-3 bullet points each
 - CTA suggestion
 - SEO keywords to target`,
-    teamId: "marketing",
-    categoryId: "mkt-content",
+    departments: ["Marketing"],
+    categoryId: "blog-posts",
     models: ["ChatGPT", "Claude"],
     variables: [
       { name: "topic", description: "Blog post topic" },
@@ -833,7 +831,7 @@ Generate an outline with:
   {
     id: "mkt-2",
     title: "Social Media Post Generator",
-    description: "Generate social media posts promoting FieldPulse content or features.",
+    overview: "Generate social media posts promoting FieldPulse content or features. Produces 3 variations — short and punchy, medium with a stat/question hook, and longer storytelling — with relevant hashtags. Tone is professional but approachable for blue-collar business owners.",
     promptText: `Write social media posts for {{platform}} promoting: {{content_to_promote}}
 
 Key message: {{key_message}}
@@ -844,8 +842,8 @@ Generate 3 variations:
 3. Longer storytelling approach
 
 Include relevant hashtags. Tone should be professional but approachable — we're talking to blue-collar business owners, not tech executives.`,
-    teamId: "marketing",
-    categoryId: "mkt-social",
+    departments: ["Marketing", "Sales"],
+    categoryId: "social-media",
     models: ["ChatGPT"],
     variables: [
       { name: "platform", description: "LinkedIn, Twitter/X, Facebook, etc." },
@@ -864,11 +862,11 @@ Include relevant hashtags. Tone should be professional but approachable — we'r
     ],
   },
 
-  // ── QA (2 prompts) ───────────────────────────────────
+  // ── Development & Technical (QA) ─────────────────────────
   {
     id: "qa-1",
     title: "Test Case Generator",
-    description: "Generate test cases for a feature based on its requirements.",
+    overview: "Generate comprehensive test cases for a feature based on its requirements. Each test case includes an ID, description, preconditions, steps, expected result, and priority level. Covers both positive and negative scenarios, focusing on user-facing behavior.",
     promptText: `Generate test cases for the following feature:
 
 Feature: {{feature_name}}
@@ -884,8 +882,8 @@ For each test case provide:
 - Priority (High/Medium/Low)
 
 Include both positive and negative test cases. Focus on user-facing behavior, not implementation details.`,
-    teamId: "qa",
-    categoryId: "qa-testcases",
+    departments: ["QA", "Engineering"],
+    categoryId: "test-cases",
     models: ["Claude"],
     variables: [
       { name: "feature_name", description: "Feature being tested" },
@@ -906,7 +904,7 @@ Include both positive and negative test cases. Focus on user-facing behavior, no
   {
     id: "qa-2",
     title: "Bug Report Template",
-    description: "Generate a well-structured bug report from a rough description of the issue.",
+    overview: "Generate a well-structured bug report from a rough description. Produces a clear title, numbered steps to reproduce, expected vs actual behavior, environment details, and suggested severity. Useful for turning informal bug reports into actionable tickets.",
     promptText: `Write a structured bug report from this description: {{rough_description}}
 
 Environment: {{environment}}
@@ -920,8 +918,8 @@ Format the report with:
 - Environment details
 - Screenshots/logs needed (describe what to capture)
 - Suggested severity and priority`,
-    teamId: "qa",
-    categoryId: "qa-bugs",
+    departments: ["QA", "Engineering"],
+    categoryId: "bug-reports",
     models: ["Model-Agnostic"],
     variables: [
       { name: "rough_description", description: "Rough description of the bug" },

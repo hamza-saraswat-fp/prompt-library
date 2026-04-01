@@ -31,7 +31,6 @@ interface PromptDrawerProps {
   prompt: Prompt | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  teamName: string
   onCopy: (text: string) => void
   isFavorite: boolean
   onToggleFavorite: () => void
@@ -42,7 +41,6 @@ export function PromptDrawer({
   prompt,
   open,
   onOpenChange,
-  teamName,
   onCopy,
   isFavorite,
   onToggleFavorite,
@@ -101,9 +99,11 @@ export function PromptDrawer({
                 {model}
               </Badge>
             ))}
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-              {teamName}
-            </Badge>
+            {prompt.departments.map((dept) => (
+              <Badge key={dept} variant="outline" className="text-[10px] px-1.5 py-0">
+                {dept}
+              </Badge>
+            ))}
             {prompt.status === "pending" && (
               <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-yellow-500 text-yellow-600 dark:text-yellow-400">
                 <Clock className="h-2.5 w-2.5 mr-0.5" />
@@ -111,7 +111,7 @@ export function PromptDrawer({
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground mt-2">{prompt.description}</p>
+          <p className="text-sm text-muted-foreground mt-2">{prompt.overview}</p>
         </SheetHeader>
 
         <ScrollArea className="flex-1 mt-6 min-h-0">
