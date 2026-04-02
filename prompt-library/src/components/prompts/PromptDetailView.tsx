@@ -5,26 +5,26 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { PromptCard } from "@/components/prompts/PromptCard"
 import {
-  ArrowLeft,
   Copy,
   Heart,
   TrendingUp,
-  Clock,
   BarChart3,
   GitCommit,
 } from "lucide-react"
+import { CopyButton } from "@/components/prompts/AiPlatformButtons"
+import { getTagColor } from "@/lib/tag-colors"
 import {
   fillVariables,
   variableToLabel,
   segmentPromptText,
 } from "@/lib/variables"
-import { modelColors } from "@/lib/constants"
+import { UseCaseShowcase } from "@/components/prompts/UseCaseShowcase"
+import { CommentsSection } from "@/components/prompts/CommentsSection"
 import type { Prompt } from "@/data/types"
 
 interface PromptDetailViewProps {
   prompt: Prompt
   bundleSiblings: Prompt[]
-  onBack: () => void
   onCopy: (text: string) => void
   isFavorite: boolean
   onToggleFavorite: () => void
@@ -36,7 +36,6 @@ interface PromptDetailViewProps {
 export function PromptDetailView({
   prompt,
   bundleSiblings,
-  onBack,
   onCopy,
   isFavorite,
   onToggleFavorite,
@@ -62,43 +61,16 @@ export function PromptDetailView({
 
   return (
     <div className="space-y-6">
-      {/* Back button */}
-      <Button
-        variant="ghost"
-        className="cursor-pointer -ml-2 text-muted-foreground hover:text-foreground"
-        onClick={onBack}
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to prompts
-      </Button>
-
       {/* Title row */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{prompt.title}</h1>
           <div className="flex flex-wrap items-center gap-2">
-            {prompt.models.map((model) => (
-              <Badge
-                key={model}
-                className={`text-xs px-2 py-0.5 ${modelColors[model] ?? ""}`}
-              >
-                {model}
+            {prompt.tags.map((tag) => (
+              <Badge key={tag} variant="outline" className={`text-xs px-2 py-0.5 ${getTagColor(tag)}`}>
+                {tag}
               </Badge>
             ))}
-            {prompt.departments.map((dept) => (
-              <Badge key={dept} variant="outline" className="text-xs px-2 py-0.5">
-                {dept}
-              </Badge>
-            ))}
-            {prompt.status === "pending" && (
-              <Badge
-                variant="outline"
-                className="text-xs px-2 py-0.5 border-yellow-500 text-yellow-600 dark:text-yellow-400"
-              >
-                <Clock className="h-3 w-3 mr-1" />
-                Pending Review
-              </Badge>
-            )}
           </div>
         </div>
         <button
@@ -203,13 +175,7 @@ export function PromptDetailView({
                 </div>
               </div>
 
-              <Button
-                className="w-full cursor-pointer"
-                onClick={() => onCopy(filledText)}
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Filled Prompt
-              </Button>
+              <CopyButton text={filledText} onCopy={onCopy} label="Copy Filled Prompt" />
             </div>
           </div>
         </div>
@@ -217,18 +183,19 @@ export function PromptDetailView({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Prompt</h2>
-            <Button
-              className="cursor-pointer"
-              onClick={() => onCopy(prompt.promptText)}
-            >
-              <Copy className="h-4 w-4 mr-2" />
-              Copy to Clipboard
-            </Button>
+            <CopyButton text={prompt.promptText} onCopy={onCopy} />
           </div>
           <div className="rounded-lg bg-muted p-6 text-sm font-mono whitespace-pre-wrap leading-relaxed max-w-4xl">
             {prompt.promptText}
           </div>
         </div>
+      )}
+
+      {prompt.useCases && prompt.useCases.length > 0 && (
+        <>
+          <Separator />
+          <UseCaseShowcase useCases={prompt.useCases} />
+        </>
       )}
 
       <Separator />
@@ -266,6 +233,9 @@ export function PromptDetailView({
         </div>
       </div>
 
+      <Separator />
+      <CommentsSection promptId={prompt.id} initialComments={prompt.comments} />
+
       {/* Related Prompts in Bundle */}
       {bundleSiblings.length > 0 && (
         <>
@@ -277,7 +247,6 @@ export function PromptDetailView({
                 <PromptCard
                   key={sibling.id}
                   prompt={sibling}
-                  onCopy={() => onCopy(sibling.promptText)}
                   onClick={() => onOpenPrompt(sibling)}
                   isFavorite={isPromptFavorite(sibling.id)}
                   onToggleFavorite={() => onTogglePromptFavorite(sibling.id)}

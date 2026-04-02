@@ -21,6 +21,7 @@ Tone: Friendly, knowledgeable, peer-to-peer.`,
     departments: ["Sales"],
     categoryId: "outreach",
     models: ["Claude", "ChatGPT"],
+    tags: ["Sales", "Outreach", "Customer-Facing"],
     variables: [
       { name: "prospect_name", description: "Name of the prospect" },
       { name: "company_name", description: "Prospect's company name" },
@@ -29,7 +30,7 @@ Tone: Friendly, knowledgeable, peer-to-peer.`,
     version: 3,
     copyCount: 127,
     isTrending: true,
-    status: "approved",
+
     createdAt: "2026-01-15",
     updatedAt: "2026-03-10",
     author: "Sarah Chen",
@@ -37,6 +38,27 @@ Tone: Friendly, knowledgeable, peer-to-peer.`,
       { version: 3, date: "2026-03-10", author: "Sarah Chen", changeDescription: "Added industry-specific pain point requirement" },
       { version: 2, date: "2026-02-20", author: "Sarah Chen", changeDescription: "Shortened word count from 200 to 150" },
       { version: 1, date: "2026-01-15", author: "Sarah Chen", changeDescription: "Initial version" },
+    ],
+    useCases: [
+      {
+        title: "HVAC Company Outreach",
+        input: `prospect_name: Mike Thompson\ncompany_name: Thompson Heating & Air\nindustry_type: HVAC`,
+        output: `Hi Mike,\n\nI came across Thompson Heating & Air while researching HVAC companies in the area, and I was impressed by your Google reviews — your customers clearly trust your team.\n\nI wanted to reach out because a lot of HVAC companies we work with were losing 5-10 jobs a month just from scheduling mix-ups and missed follow-ups. One owner told me he didn't even realize how much revenue was slipping through until he could see it all in one place.\n\nWe built FieldPulse to help with exactly that — keeping your schedule, dispatching, and job costing organized without adding more admin work to your plate.\n\nWould you be open to a quick 15-minute call this week to see if it might be a fit?`,
+      },
+    ],
+    comments: [
+      {
+        id: "c1",
+        author: "Mike Rodriguez",
+        text: "This has been super helpful for our HVAC outreach. Saved me hours every week on writing personalized emails!",
+        createdAt: "2026-03-15",
+      },
+      {
+        id: "c2",
+        author: "Jordan Lee",
+        text: "Consider adding a section about seasonal promotions — works great for landscaping and HVAC prospects during peak seasons.",
+        createdAt: "2026-03-22",
+      },
     ],
   },
   {
@@ -58,6 +80,7 @@ Generate a conversational response that:
     departments: ["Sales"],
     categoryId: "objection-handling",
     models: ["Claude"],
+    tags: ["Sales", "Customer-Facing", "Troubleshooting"],
     variables: [
       { name: "competitor_name", description: "The competitor they're comparing against" },
       { name: "business_size", description: "e.g., 5-person, 20-person, 50-person" },
@@ -68,7 +91,7 @@ Generate a conversational response that:
     version: 2,
     copyCount: 89,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-01",
     updatedAt: "2026-03-05",
     author: "Mike Rodriguez",
@@ -98,6 +121,7 @@ Keep it professional but avoid jargon. Write for a business owner, not a technic
     departments: ["Sales"],
     categoryId: "proposals",
     models: ["Claude", "ChatGPT"],
+    tags: ["Sales", "Customer-Facing", "Documentation"],
     variables: [
       { name: "company_name", description: "Client company name" },
       { name: "industry_type", description: "Their field service industry" },
@@ -107,7 +131,7 @@ Keep it professional but avoid jargon. Write for a business owner, not a technic
     version: 1,
     copyCount: 45,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-01",
     updatedAt: "2026-03-01",
     author: "Sarah Chen",
@@ -131,6 +155,7 @@ Order the questions from easy/rapport-building to more probing. Each question sh
     departments: ["Sales", "Customer Success"],
     categoryId: "lead-qualification",
     models: ["ChatGPT", "Claude"],
+    tags: ["Sales", "Customer Success", "Analysis"],
     variables: [
       { name: "industry_type", description: "Prospect's industry" },
       { name: "team_size", description: "Number of employees" },
@@ -138,7 +163,7 @@ Order the questions from easy/rapport-building to more probing. Each question sh
     version: 1,
     copyCount: 62,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-15",
     updatedAt: "2026-02-15",
     author: "Mike Rodriguez",
@@ -162,6 +187,7 @@ Keep it factual and helpful, not trash-talking. The goal is to arm our sales tea
     departments: ["Sales", "Product"],
     categoryId: "competitive-analysis",
     models: ["Claude"],
+    tags: ["Sales", "Product", "Analysis"],
     variables: [
       { name: "competitor_name", description: "The competitor to compare against" },
       { name: "industry_type", description: "The prospect's industry vertical" },
@@ -169,7 +195,7 @@ Keep it factual and helpful, not trash-talking. The goal is to arm our sales tea
     version: 2,
     copyCount: 34,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-01-20",
     updatedAt: "2026-02-28",
     author: "Sarah Chen",
@@ -197,6 +223,7 @@ The email should:
     departments: ["Sales", "Customer Success"],
     categoryId: "follow-up",
     models: ["Model-Agnostic"],
+    tags: ["Sales", "Customer Success", "Outreach", "Customer-Facing"],
     variables: [
       { name: "prospect_name", description: "Prospect's first name" },
       { name: "key_features", description: "Features they showed most interest in" },
@@ -206,7 +233,7 @@ The email should:
     version: 1,
     copyCount: 71,
     isTrending: true,
-    status: "approved",
+
     createdAt: "2026-03-15",
     updatedAt: "2026-03-15",
     author: "Mike Rodriguez",
@@ -238,6 +265,7 @@ Tone: Helpful, empathetic, professional.`,
     departments: ["Customer Success", "Product"],
     categoryId: "ticket-response",
     models: ["Claude", "ChatGPT"],
+    tags: ["Customer Success", "Product", "Customer-Facing", "Troubleshooting"],
     variables: [
       { name: "customer_name", description: "Customer's name" },
       { name: "company_name", description: "Their company name" },
@@ -247,13 +275,28 @@ Tone: Helpful, empathetic, professional.`,
     version: 2,
     copyCount: 156,
     isTrending: true,
-    status: "approved",
+
     createdAt: "2026-01-10",
     updatedAt: "2026-03-01",
     author: "Priya Patel",
     versionHistory: [
       { version: 2, date: "2026-03-01", author: "Priya Patel", changeDescription: "Added workaround guidance" },
       { version: 1, date: "2026-01-10", author: "Priya Patel", changeDescription: "Initial version" },
+    ],
+    useCases: [
+      {
+        title: "Recurring Invoice Feature Request",
+        input: `customer_name: David Park\ncompany_name: Park's Plumbing Solutions\nfeature_description: Ability to set up recurring invoices for maintenance contracts\nworkaround: Manually duplicate the last invoice each month and update the date`,
+        output: `Hi David,\n\nThank you for reaching out and for sharing this idea — recurring invoices for maintenance contracts is a great suggestion, and I can see how that would save your team a lot of time at Park's Plumbing Solutions.\n\nI've logged this request with our product team, and I want you to know it's something other customers have asked about as well, so it's on our radar.\n\nIn the meantime, here's a quick workaround that might help:\n1. Open your most recent invoice for the contract\n2. Click the three-dot menu and select "Duplicate"\n3. Update the date and any line items as needed\n4. Send as usual\n\nIt's not as seamless as automatic recurring invoices, but it should cut the manual work in half. I'll keep you posted if this feature moves forward.\n\nThanks again for the feedback, David!`,
+      },
+    ],
+    comments: [
+      {
+        id: "c3",
+        author: "Sarah Chen",
+        text: "Our CS team uses this daily — the tone is exactly right. Customers feel heard without us over-promising.",
+        createdAt: "2026-03-18",
+      },
     ],
   },
   {
@@ -276,6 +319,7 @@ Include:
     departments: ["Customer Success", "Implementation"],
     categoryId: "onboarding",
     models: ["Model-Agnostic"],
+    tags: ["Customer Success", "Implementation", "Onboarding", "Customer-Facing"],
     variables: [
       { name: "customer_name", description: "New customer's name" },
       { name: "company_name", description: "Their company" },
@@ -288,7 +332,7 @@ Include:
     copyCount: 98,
     isTrending: false,
     bundleId: "bundle-onboarding",
-    status: "approved",
+
     createdAt: "2025-12-01",
     updatedAt: "2026-02-15",
     author: "Priya Patel",
@@ -316,6 +360,7 @@ The email should:
     departments: ["Customer Success", "Implementation"],
     categoryId: "onboarding",
     models: ["Claude"],
+    tags: ["Customer Success", "Implementation", "Onboarding", "Customer-Facing"],
     variables: [
       { name: "customer_name", description: "Customer name" },
       { name: "company_name", description: "Company name" },
@@ -326,7 +371,7 @@ The email should:
     copyCount: 67,
     isTrending: false,
     bundleId: "bundle-onboarding",
-    status: "approved",
+
     createdAt: "2026-02-01",
     updatedAt: "2026-02-01",
     author: "Priya Patel",
@@ -347,6 +392,7 @@ Congratulate them, summarize what was set up, list any pending items with recomm
     departments: ["Customer Success", "Implementation"],
     categoryId: "onboarding",
     models: ["Model-Agnostic"],
+    tags: ["Customer Success", "Implementation", "Onboarding", "Customer-Facing"],
     variables: [
       { name: "customer_name", description: "Customer name" },
       { name: "company_name", description: "Company name" },
@@ -357,7 +403,7 @@ Congratulate them, summarize what was set up, list any pending items with recomm
     copyCount: 42,
     isTrending: false,
     bundleId: "bundle-onboarding",
-    status: "approved",
+
     createdAt: "2026-02-10",
     updatedAt: "2026-02-10",
     author: "Priya Patel",
@@ -379,6 +425,7 @@ The email should feel personal and genuinely helpful, NOT like an automated rete
     departments: ["Customer Success"],
     categoryId: "churn-prevention",
     models: ["Claude"],
+    tags: ["Customer Success", "Customer-Facing"],
     variables: [
       { name: "customer_name", description: "Customer name" },
       { name: "company_name", description: "Company name" },
@@ -390,7 +437,7 @@ The email should feel personal and genuinely helpful, NOT like an automated rete
     version: 1,
     copyCount: 23,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-20",
     updatedAt: "2026-03-20",
     author: "Priya Patel",
@@ -414,6 +461,7 @@ Generate a structured summary with: highlights, areas for improvement, recommend
     departments: ["Customer Success", "Sales"],
     categoryId: "qbr-prep",
     models: ["Claude", "Gemini"],
+    tags: ["Customer Success", "Sales", "Analysis", "Internal"],
     variables: [
       { name: "company_name", description: "Customer company name" },
       { name: "jobs_completed", description: "Number of jobs this quarter" },
@@ -425,7 +473,7 @@ Generate a structured summary with: highlights, areas for improvement, recommend
     version: 1,
     copyCount: 15,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-25",
     updatedAt: "2026-03-25",
     author: "Jordan Lee",
@@ -454,6 +502,7 @@ Keep each item actionable and specific to the change type. Skip items that don't
     departments: ["Engineering"],
     categoryId: "code-review",
     models: ["Claude"],
+    tags: ["Engineering", "Internal"],
     variables: [
       { name: "change_type", description: "e.g., 'new API endpoint', 'database migration', 'UI component'" },
       { name: "language", description: "e.g., TypeScript, Ruby, Python" },
@@ -462,7 +511,7 @@ Keep each item actionable and specific to the change type. Skip items that don't
     version: 2,
     copyCount: 84,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-01-05",
     updatedAt: "2026-02-20",
     author: "Alex Kim",
@@ -491,13 +540,14 @@ Follow REST API documentation best practices. Be precise about types.`,
     departments: ["Engineering", "Product"],
     categoryId: "documentation",
     models: ["Claude", "ChatGPT"],
+    tags: ["Engineering", "Product", "Documentation", "Internal"],
     variables: [
       { name: "endpoint_description", description: "Paste the endpoint code or describe it" },
     ],
     version: 1,
     copyCount: 56,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-10",
     updatedAt: "2026-02-10",
     author: "Alex Kim",
@@ -524,6 +574,7 @@ Walk me through:
     departments: ["Engineering", "QA"],
     categoryId: "debugging",
     models: ["Claude"],
+    tags: ["Engineering", "QA", "Troubleshooting", "Internal"],
     variables: [
       { name: "error_message", description: "The error message or stack trace" },
       { name: "location", description: "File/function where the error occurs" },
@@ -533,12 +584,33 @@ Walk me through:
     version: 1,
     copyCount: 103,
     isTrending: true,
-    status: "approved",
+
     createdAt: "2026-01-20",
     updatedAt: "2026-01-20",
     author: "Alex Kim",
     versionHistory: [
       { version: 1, date: "2026-01-20", author: "Alex Kim", changeDescription: "Initial version" },
+    ],
+    useCases: [
+      {
+        title: "React Hydration Mismatch",
+        input: `error_message: Hydration failed because the initial UI does not match what was rendered on the server. Warning: Expected server HTML to contain a matching <div> in <div>.\nlocation: src/components/Dashboard/StatsPanel.tsx, line 42\nattempted_fixes: Wrapped dynamic content in useEffect, checked for window references\ncode_context: const StatsPanel = () => { const [timeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone); return <div>{timeZone}</div>; }`,
+        output: `**What the error means:** React's hydration process found a mismatch between the server-rendered HTML and the client-side render. The server and client produced different output for the same component.\n\n**Probable root causes (ranked):**\n1. **Browser-only API in initial render (90%)** — \`Intl.DateTimeFormat().resolvedOptions().timeZone\` runs during SSR where the timezone differs from the client.\n2. **Missing dynamic import wrapper (5%)** — Component may need to be client-only.\n\n**Debugging steps:**\n1. Check if \`timeZone\` value differs between server logs and browser console\n2. Wrap the timezone logic in a \`useEffect\` with an initial empty state\n\n**Suggested fix:**\n\`\`\`tsx\nconst [timeZone, setTimeZone] = useState("");\nuseEffect(() => {\n  setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);\n}, []);\n\`\`\`\nThis ensures the timezone is only read on the client after hydration completes.`,
+      },
+    ],
+    comments: [
+      {
+        id: "c4",
+        author: "Priya Patel",
+        text: "Used this to debug a tricky React rendering issue — the root cause ranking was spot on and saved me hours of guessing.",
+        createdAt: "2026-03-10",
+      },
+      {
+        id: "c5",
+        author: "Jordan Lee",
+        text: "The structured output format makes it easy to work through issues methodically. Would love a version specifically for API/backend debugging too.",
+        createdAt: "2026-03-25",
+      },
     ],
   },
   {
@@ -562,6 +634,7 @@ Keep it concise. Each section should be 2-4 sentences max.`,
     departments: ["Engineering", "Product"],
     categoryId: "architecture",
     models: ["Claude"],
+    tags: ["Engineering", "Product", "Documentation", "Internal"],
     variables: [
       { name: "decision_title", description: "What decision was made" },
       { name: "context", description: "Why this decision is needed" },
@@ -570,7 +643,7 @@ Keep it concise. Each section should be 2-4 sentences max.`,
     version: 1,
     copyCount: 28,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-10",
     updatedAt: "2026-03-10",
     author: "Alex Kim",
@@ -603,6 +676,7 @@ Keep it focused and practical. This is for internal alignment, not an external s
     departments: ["Product", "Engineering"],
     categoryId: "prds",
     models: ["Claude"],
+    tags: ["Product", "Engineering", "Documentation", "Internal"],
     variables: [
       { name: "feature_name", description: "Name of the feature" },
       { name: "problem_statement", description: "What problem does this solve" },
@@ -612,7 +686,7 @@ Keep it focused and practical. This is for internal alignment, not an external s
     version: 2,
     copyCount: 41,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-01-08",
     updatedAt: "2026-02-25",
     author: "Hamza Saraswat",
@@ -636,6 +710,7 @@ Generate {{story_count}} user stories, ordered by priority. Focus on the user's 
     departments: ["Product", "Engineering"],
     categoryId: "user-stories",
     models: ["Claude", "ChatGPT"],
+    tags: ["Product", "Engineering", "Documentation", "Internal"],
     variables: [
       { name: "feature_description", description: "Describe the feature" },
       { name: "story_count", description: "How many stories to generate (e.g., 5)" },
@@ -643,7 +718,7 @@ Generate {{story_count}} user stories, ordered by priority. Focus on the user's 
     version: 1,
     copyCount: 33,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-18",
     updatedAt: "2026-02-18",
     author: "Hamza Saraswat",
@@ -669,6 +744,7 @@ Write customer-facing release notes that:
     departments: ["Product", "Marketing"],
     categoryId: "release-notes",
     models: ["Model-Agnostic"],
+    tags: ["Product", "Marketing", "Documentation", "Customer-Facing"],
     variables: [
       { name: "version_number", description: "e.g., 4.2.0" },
       { name: "change_list", description: "List of changes/PRs included in this release" },
@@ -676,7 +752,7 @@ Write customer-facing release notes that:
     version: 1,
     copyCount: 19,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-05",
     updatedAt: "2026-03-05",
     author: "Hamza Saraswat",
@@ -702,6 +778,7 @@ Structure the analysis as:
     departments: ["Product", "Sales"],
     categoryId: "competitive-analysis",
     models: ["Claude", "Gemini"],
+    tags: ["Product", "Sales", "Analysis", "Internal"],
     variables: [
       { name: "competitor_name", description: "Competitor to analyze" },
       { name: "focus_areas", description: "Specific areas to compare" },
@@ -710,7 +787,7 @@ Structure the analysis as:
     version: 1,
     copyCount: 12,
     isTrending: false,
-    status: "pending",
+
     createdAt: "2026-03-28",
     updatedAt: "2026-03-28",
     author: "Hamza Saraswat",
@@ -734,6 +811,7 @@ Generate a step-by-step checklist grouped by phase (Day 1, Week 1, Week 2) with 
     departments: ["Implementation", "Customer Success"],
     categoryId: "setup-guides",
     models: ["Claude"],
+    tags: ["Implementation", "Customer Success", "Onboarding", "Documentation"],
     variables: [
       { name: "company_name", description: "Customer company" },
       { name: "industry_type", description: "Their industry" },
@@ -744,7 +822,7 @@ Generate a step-by-step checklist grouped by phase (Day 1, Week 1, Week 2) with 
     version: 1,
     copyCount: 31,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-05",
     updatedAt: "2026-02-05",
     author: "Taylor Brooks",
@@ -771,6 +849,7 @@ Include:
     departments: ["Implementation", "Engineering"],
     categoryId: "migration",
     models: ["Claude"],
+    tags: ["Implementation", "Engineering", "Onboarding", "Internal"],
     variables: [
       { name: "company_name", description: "Customer company" },
       { name: "previous_tool", description: "Tool they're migrating from" },
@@ -781,7 +860,7 @@ Include:
     version: 1,
     copyCount: 18,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-12",
     updatedAt: "2026-03-12",
     author: "Taylor Brooks",
@@ -811,6 +890,7 @@ Generate an outline with:
     departments: ["Marketing"],
     categoryId: "blog-posts",
     models: ["ChatGPT", "Claude"],
+    tags: ["Marketing", "Customer-Facing", "Outreach"],
     variables: [
       { name: "topic", description: "Blog post topic" },
       { name: "audience", description: "Who is this for" },
@@ -820,7 +900,7 @@ Generate an outline with:
     version: 1,
     copyCount: 27,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-22",
     updatedAt: "2026-02-22",
     author: "Emma Davis",
@@ -845,6 +925,7 @@ Include relevant hashtags. Tone should be professional but approachable — we'r
     departments: ["Marketing", "Sales"],
     categoryId: "social-media",
     models: ["ChatGPT"],
+    tags: ["Marketing", "Sales", "Customer-Facing", "Outreach"],
     variables: [
       { name: "platform", description: "LinkedIn, Twitter/X, Facebook, etc." },
       { name: "content_to_promote", description: "Blog post, feature, event, etc." },
@@ -853,7 +934,7 @@ Include relevant hashtags. Tone should be professional but approachable — we'r
     version: 1,
     copyCount: 35,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-03-01",
     updatedAt: "2026-03-01",
     author: "Emma Davis",
@@ -885,6 +966,7 @@ Include both positive and negative test cases. Focus on user-facing behavior, no
     departments: ["QA", "Engineering"],
     categoryId: "test-cases",
     models: ["Claude"],
+    tags: ["QA", "Engineering", "Internal"],
     variables: [
       { name: "feature_name", description: "Feature being tested" },
       { name: "requirements", description: "Feature requirements/acceptance criteria" },
@@ -893,7 +975,7 @@ Include both positive and negative test cases. Focus on user-facing behavior, no
     version: 1,
     copyCount: 44,
     isTrending: false,
-    status: "approved",
+
     createdAt: "2026-02-14",
     updatedAt: "2026-02-14",
     author: "Chris Nguyen",
@@ -921,6 +1003,7 @@ Format the report with:
     departments: ["QA", "Engineering"],
     categoryId: "bug-reports",
     models: ["Model-Agnostic"],
+    tags: ["QA", "Engineering", "Troubleshooting", "Internal"],
     variables: [
       { name: "rough_description", description: "Rough description of the bug" },
       { name: "environment", description: "e.g., Production, Staging, browser/device info" },
@@ -929,7 +1012,7 @@ Format the report with:
     version: 1,
     copyCount: 52,
     isTrending: false,
-    status: "pending",
+
     createdAt: "2026-03-22",
     updatedAt: "2026-03-22",
     author: "Chris Nguyen",

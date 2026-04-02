@@ -7,19 +7,19 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { Search, X, Sun, Moon, SlidersHorizontal, Building2, Check } from "lucide-react"
-import { DEPARTMENTS } from "@/data/types"
-import type { ModelType, Department } from "@/data/types"
-
-const models: (ModelType | "All")[] = ["All", "ChatGPT", "Claude", "Gemini", "Model-Agnostic"]
+import { Search, X, Sun, Moon, Tag, Check, LayoutGrid, Table } from "lucide-react"
+import { TAGS } from "@/data/types"
+import type { Department } from "@/data/types"
 
 interface HeaderProps {
   searchQuery: string
   onSearchChange: (query: string) => void
-  selectedModel: ModelType | null
-  onModelChange: (model: ModelType | null) => void
   selectedDepartments: Department[]
   onDepartmentChange: (departments: Department[]) => void
+  selectedTags: string[]
+  onTagChange: (tags: string[]) => void
+  viewPreference: "cards" | "table"
+  onViewPreferenceChange: (pref: "cards" | "table") => void
   isDark: boolean
   onToggleTheme: () => void
 }
@@ -27,18 +27,18 @@ interface HeaderProps {
 export function Header({
   searchQuery,
   onSearchChange,
-  selectedModel,
-  onModelChange,
-  selectedDepartments,
-  onDepartmentChange,
+  selectedTags,
+  onTagChange,
+  viewPreference,
+  onViewPreferenceChange,
   isDark,
   onToggleTheme,
 }: HeaderProps) {
-  const toggleDepartment = (dept: Department) => {
-    if (selectedDepartments.includes(dept)) {
-      onDepartmentChange(selectedDepartments.filter((d) => d !== dept))
+  const toggleTag = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      onTagChange(selectedTags.filter((t) => t !== tag))
     } else {
-      onDepartmentChange([...selectedDepartments, dept])
+      onTagChange([...selectedTags, tag])
     }
   }
 
@@ -63,19 +63,19 @@ export function Header({
         )}
       </div>
 
-      {/* Department Filter */}
+      {/* Tag Filter */}
       <DropdownMenu>
         <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
-          <Building2 className="h-4 w-4" />
-          {selectedDepartments.length > 0
-            ? `Departments (${selectedDepartments.length})`
-            : "All Departments"}
+          <Tag className="h-4 w-4" />
+          {selectedTags.length > 0
+            ? `Tags (${selectedTags.length})`
+            : "All Tags"}
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          {selectedDepartments.length > 0 && (
+        <DropdownMenuContent align="end" className="w-48 max-h-80 overflow-y-auto">
+          {selectedTags.length > 0 && (
             <>
               <DropdownMenuItem
-                onClick={() => onDepartmentChange([])}
+                onClick={() => onTagChange([])}
                 className="cursor-pointer text-muted-foreground"
               >
                 Clear all
@@ -83,45 +83,48 @@ export function Header({
               <DropdownMenuSeparator />
             </>
           )}
-          {DEPARTMENTS.map((dept) => (
+          {TAGS.map((tag) => (
             <DropdownMenuItem
-              key={dept}
-              onClick={() => toggleDepartment(dept)}
+              key={tag}
+              onClick={() => toggleTag(tag)}
               className="cursor-pointer"
             >
               <div className="flex items-center gap-2 w-full">
                 <div className={`h-4 w-4 flex items-center justify-center rounded border ${
-                  selectedDepartments.includes(dept)
+                  selectedTags.includes(tag)
                     ? "bg-primary border-primary text-primary-foreground"
                     : "border-input"
                 }`}>
-                  {selectedDepartments.includes(dept) && <Check className="h-3 w-3" />}
+                  {selectedTags.includes(tag) && <Check className="h-3 w-3" />}
                 </div>
-                {dept}
+                {tag}
               </div>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Model Filter */}
-      <DropdownMenu>
-        <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
-          <SlidersHorizontal className="h-4 w-4" />
-          {selectedModel ?? "All Models"}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {models.map((model) => (
-            <DropdownMenuItem
-              key={model}
-              onClick={() => onModelChange(model === "All" ? null : model)}
-              className="cursor-pointer"
-            >
-              {model === "All" ? "All Models" : model}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* View Toggle */}
+      <div className="flex items-center rounded-md border border-input">
+        <Button
+          variant={viewPreference === "cards" ? "secondary" : "ghost"}
+          size="icon"
+          className="h-9 w-9 rounded-r-none cursor-pointer"
+          onClick={() => onViewPreferenceChange("cards")}
+          title="Card view"
+        >
+          <LayoutGrid className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={viewPreference === "table" ? "secondary" : "ghost"}
+          size="icon"
+          className="h-9 w-9 rounded-l-none cursor-pointer"
+          onClick={() => onViewPreferenceChange("table")}
+          title="Table view"
+        >
+          <Table className="h-4 w-4" />
+        </Button>
+      </div>
 
       {/* Theme Toggle */}
       <Button

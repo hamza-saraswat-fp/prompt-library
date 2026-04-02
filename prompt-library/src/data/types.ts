@@ -1,7 +1,5 @@
 export type ModelType = "ChatGPT" | "Claude" | "Gemini" | "Model-Agnostic"
 
-export type PromptStatus = "approved" | "pending"
-
 export const DEPARTMENTS = [
   "Sales",
   "Customer Success",
@@ -13,6 +11,28 @@ export const DEPARTMENTS = [
 ] as const
 
 export type Department = (typeof DEPARTMENTS)[number]
+
+export const TAGS = [
+  // Department tags
+  "Sales",
+  "Customer Success",
+  "Implementation",
+  "Engineering",
+  "Product",
+  "Marketing",
+  "QA",
+  // Workflow tags
+  "Onboarding",
+  "Documentation",
+  "Troubleshooting",
+  "Customer-Facing",
+  "Internal",
+  "Outreach",
+  "Analysis",
+  "Automation",
+] as const
+
+export type Tag = (typeof TAGS)[number]
 
 export interface Variable {
   name: string
@@ -46,6 +66,19 @@ export interface Bundle {
   promptIds: string[]
 }
 
+export interface UseCase {
+  title: string
+  input: string
+  output: string
+}
+
+export interface Comment {
+  id: string
+  author: string
+  text: string
+  createdAt: string
+}
+
 export interface Prompt {
   id: string
   title: string
@@ -55,13 +88,15 @@ export interface Prompt {
   categoryId: string
   models: ModelType[]
   variables: Variable[]
+  tags: string[]
   version: number
   copyCount: number
   isTrending: boolean
   bundleId?: string
-  status: PromptStatus
   createdAt: string
   updatedAt: string
   author: string
   versionHistory: VersionEntry[]
+  useCases?: UseCase[]
+  comments?: Comment[]
 }

@@ -15,6 +15,7 @@ import {
   Code,
   Target,
   Palette,
+  Zap,
 } from "lucide-react"
 
 const iconMap: Record<string, React.ElementType> = {
@@ -52,10 +53,19 @@ export function Sidebar({
         collapsed ? "w-16" : "w-64"
       )}
     >
-      {/* Header */}
+      {/* Branding */}
       <div className="flex items-center justify-between p-4">
-        {!collapsed && (
-          <h2 className="text-sm font-semibold tracking-tight">Prompt Library</h2>
+        {!collapsed ? (
+          <div className="min-w-0">
+            <img
+              src="/fieldpulse-logo.svg"
+              alt="FieldPulse"
+              className="h-6 w-auto"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1">AI for the Field</p>
+          </div>
+        ) : (
+          <Zap className="h-5 w-5 text-primary shrink-0 mx-auto" />
         )}
         <Button
           variant="ghost"

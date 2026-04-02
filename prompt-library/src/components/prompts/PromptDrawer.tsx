@@ -11,10 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
-  Copy,
   Heart,
   TrendingUp,
-  Clock,
   History,
   BarChart3,
   GitCommit,
@@ -23,8 +21,9 @@ import {
   Maximize2,
   X,
 } from "lucide-react"
+import { CopyButton } from "@/components/prompts/AiPlatformButtons"
+import { getTagColor } from "@/lib/tag-colors"
 import { fillVariables, variableToLabel, segmentPromptText } from "@/lib/variables"
-import { modelColors } from "@/lib/constants"
 import type { Prompt } from "@/data/types"
 
 interface PromptDrawerProps {
@@ -91,25 +90,11 @@ export function PromptDrawer({
         <SheetHeader className="shrink-0 pr-24">
           <SheetTitle className="text-left text-xl">{prompt.title}</SheetTitle>
           <div className="flex flex-wrap gap-1.5 mt-1">
-            {prompt.models.map((model) => (
-              <Badge
-                key={model}
-                className={`text-[10px] px-1.5 py-0 ${modelColors[model] ?? ""}`}
-              >
-                {model}
+            {prompt.tags.map((tag) => (
+              <Badge key={tag} variant="outline" className={`text-[10px] px-1.5 py-0 ${getTagColor(tag)}`}>
+                {tag}
               </Badge>
             ))}
-            {prompt.departments.map((dept) => (
-              <Badge key={dept} variant="outline" className="text-[10px] px-1.5 py-0">
-                {dept}
-              </Badge>
-            ))}
-            {prompt.status === "pending" && (
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-yellow-500 text-yellow-600 dark:text-yellow-400">
-                <Clock className="h-2.5 w-2.5 mr-0.5" />
-                Pending Review
-              </Badge>
-            )}
           </div>
           <p className="text-sm text-muted-foreground mt-2">{prompt.overview}</p>
         </SheetHeader>
@@ -236,13 +221,7 @@ export function PromptDrawer({
             <Maximize2 className="h-4 w-4 mr-2" />
             Full View
           </Button>
-          <Button
-            className="flex-1 cursor-pointer"
-            onClick={() => onCopy(filledText)}
-          >
-            <Copy className="h-4 w-4 mr-2" />
-            {hasVariables ? "Copy Filled Prompt" : "Copy to Clipboard"}
-          </Button>
+          <CopyButton text={filledText} onCopy={onCopy} size="sm" label={hasVariables ? "Copy Filled Prompt" : "Copy"} />
         </div>
       </SheetContent>
     </Sheet>

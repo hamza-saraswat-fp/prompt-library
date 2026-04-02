@@ -7,31 +7,41 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Copy, TrendingUp, Clock } from "lucide-react"
-import { modelColors } from "@/lib/constants"
+import { TrendingUp, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { getCategoryById } from "@/data/teams"
+import { getTagColor } from "@/lib/tag-colors"
 import type { Prompt } from "@/data/types"
 
 interface PromptTableProps {
   prompts: Prompt[]
-  onCopy: (prompt: Prompt) => void
   onClick: (prompt: Prompt) => void
+  sortField: "title" | null
+  sortDirection: "asc" | "desc"
+  onSort: (field: "title") => void
 }
 
-export function PromptTable({ prompts, onCopy, onClick }: PromptTableProps) {
+export function PromptTable({ prompts, onClick, sortField, sortDirection, onSort }: PromptTableProps) {
+  const SortIcon = sortField === "title"
+    ? sortDirection === "asc" ? ArrowUp : ArrowDown
+    : ArrowUpDown
+
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[280px]">Title</TableHead>
-            <TableHead>Departments</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Model</TableHead>
-            <TableHead className="text-right">Copies</TableHead>
-            <TableHead className="text-right">Ver.</TableHead>
-            <TableHead className="w-[80px]"></TableHead>
+            <TableHead className="w-[300px] py-2 px-3 text-xs">
+              <button
+                className="flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => onSort("title")}
+              >
+                Title
+                <SortIcon className="h-3.5 w-3.5" />
+              </button>
+            </TableHead>
+            <TableHead className="py-2 px-3 text-xs">Overview</TableHead>
+            <TableHead className="py-2 px-3 text-xs">Tags</TableHead>
+            <TableHead className="py-2 px-3 text-xs">Category</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,67 +51,35 @@ export function PromptTable({ prompts, onCopy, onClick }: PromptTableProps) {
               className="cursor-pointer"
               onClick={() => onClick(prompt)}
             >
-              <TableCell className="font-medium">
+              <TableCell className="font-medium py-2 px-3">
                 <div className="flex items-center gap-2">
                   {prompt.title}
                   {prompt.isTrending && (
-                    <TrendingUp className="h-3.5 w-3.5 text-orange-500" />
-                  )}
-                  {prompt.status === "pending" && (
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-yellow-500 text-yellow-600 dark:text-yellow-400">
-                      <Clock className="h-2.5 w-2.5 mr-0.5" />
-                      Pending
-                    </Badge>
+                    <TrendingUp className="h-3.5 w-3.5 text-orange-500 shrink-0" />
                   )}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="py-2 px-3 max-w-[300px]">
+                <p className="text-xs text-muted-foreground line-clamp-1">
+                  {prompt.overview}
+                </p>
+              </TableCell>
+              <TableCell className="py-2 px-3">
                 <div className="flex flex-wrap gap-1">
-                  {prompt.departments.slice(0, 2).map((dept) => (
-                    <Badge key={dept} variant="outline" className="text-[10px]">
-                      {dept}
+                  {prompt.tags.slice(0, 2).map((tag) => (
+                    <Badge key={tag} variant="outline" className={`text-[10px] px-1.5 py-0 ${getTagColor(tag)}`}>
+                      {tag}
                     </Badge>
                   ))}
-                  {prompt.departments.length > 2 && (
-                    <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                      +{prompt.departments.length - 2}
+                  {prompt.tags.length > 2 && (
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">
+                      +{prompt.tags.length - 2}
                     </Badge>
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
+              <TableCell className="py-2 px-3 text-sm text-muted-foreground">
                 {getCategoryById(prompt.categoryId)?.name ?? ""}
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {prompt.models.map((model) => (
-                    <Badge
-                      key={model}
-                      className={`text-[10px] px-1.5 py-0 ${modelColors[model] ?? ""}`}
-                    >
-                      {model}
-                    </Badge>
-                  ))}
-                </div>
-              </TableCell>
-              <TableCell className="text-right text-sm text-muted-foreground">
-                {prompt.copyCount}
-              </TableCell>
-              <TableCell className="text-right text-sm text-muted-foreground">
-                v{prompt.version}
-              </TableCell>
-              <TableCell>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 w-7 p-0 cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onCopy(prompt)
-                  }}
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                </Button>
               </TableCell>
             </TableRow>
           ))}

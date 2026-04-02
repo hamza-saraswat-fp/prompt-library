@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 90" fill="none">
+  <!-- FieldPulse wordmark approximation - replace with official SVG asset -->
+  <text x="0" y="70" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="72" font-weight="800" fill="#0B0B3B" letter-spacing="-2">FieldPulse</text>
+  <!-- Signal arcs on the e -->
+  <path d="M390 18 C396 12, 404 12, 410 18" stroke="#0B0B3B" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M383 8 C393 -2, 407 -2, 417 8" stroke="#0B0B3B" stroke-width="6" stroke-linecap="round" fill="none"/>
+</svg>
