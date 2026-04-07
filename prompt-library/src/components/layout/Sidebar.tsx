@@ -35,6 +35,8 @@ interface SidebarProps {
   collapsed: boolean
   onToggleCollapsed: () => void
   onSubmitPrompt: () => void
+  onGoHome: () => void
+  activeView: "home" | "browse"
 }
 
 export function Sidebar({
@@ -45,6 +47,8 @@ export function Sidebar({
   collapsed,
   onToggleCollapsed,
   onSubmitPrompt,
+  onGoHome,
+  activeView,
 }: SidebarProps) {
   return (
     <aside
@@ -53,19 +57,19 @@ export function Sidebar({
         collapsed ? "w-16" : "w-64"
       )}
     >
-      {/* Branding */}
+      {/* Branding — click to go home */}
       <div className="flex items-center justify-between p-4">
         {!collapsed ? (
-          <div className="min-w-0">
+          <div className="min-w-0 cursor-pointer" onClick={onGoHome}>
             <img
               src="/fieldpulse-logo.svg"
               alt="FieldPulse"
-              className="h-6 w-auto"
+              className="h-6 w-auto dark:invert"
             />
             <p className="text-[10px] text-muted-foreground mt-1">AI for the Field</p>
           </div>
         ) : (
-          <Zap className="h-5 w-5 text-primary shrink-0 mx-auto" />
+          <Zap className="h-5 w-5 text-primary shrink-0 mx-auto cursor-pointer" onClick={onGoHome} />
         )}
         <Button
           variant="ghost"
@@ -84,7 +88,7 @@ export function Sidebar({
         <div className="p-2 space-y-1">
           {/* All Prompts */}
           <Button
-            variant={selectedGroup === null && !showFavorites ? "secondary" : "ghost"}
+            variant={activeView === "browse" && selectedGroup === null && !showFavorites ? "secondary" : "ghost"}
             className={cn(
               "w-full justify-start cursor-pointer",
               collapsed && "justify-center px-2"

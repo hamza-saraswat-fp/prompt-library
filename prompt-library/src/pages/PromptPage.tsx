@@ -5,6 +5,7 @@ import { PromptDetailView } from "@/components/prompts/PromptDetailView"
 import { prompts } from "@/data/prompts"
 import { bundles } from "@/data/teams"
 import { useFavorites } from "@/hooks/useFavorites"
+import { useRatings } from "@/hooks/useRatings"
 import { toast } from "sonner"
 import { Link2, ArrowLeft } from "lucide-react"
 
@@ -12,6 +13,7 @@ export function PromptPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { isFavorite, toggleFavorite } = useFavorites()
+  const { getRating, vote } = useRatings()
 
   const prompt = prompts.find((p) => p.id === id)
 
@@ -93,6 +95,8 @@ export function PromptPage() {
         onOpenPrompt={(p) => navigate(`/prompts/${p.id}`)}
         isPromptFavorite={isFavorite}
         onTogglePromptFavorite={toggleFavorite}
+        rating={getRating(prompt.id)}
+        onVote={vote}
       />
     </div>
   )

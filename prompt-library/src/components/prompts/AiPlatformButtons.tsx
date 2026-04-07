@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
+import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "@/components/icons/PlatformIcons"
 
 interface CopyButtonProps {
   text: string
@@ -15,10 +16,10 @@ interface CopyButtonProps {
 }
 
 const platforms = [
-  { label: "Open in ChatGPT", url: "https://chatgpt.com/", color: "bg-green-500" },
-  { label: "Open in Claude", url: "https://claude.ai/new", color: "bg-orange-500" },
-  { label: "Open in Gemini", url: "https://gemini.google.com/", color: "bg-blue-500" },
-] as const
+  { label: "Open in ChatGPT", getUrl: (text: string) => `https://chatgpt.com/?q=${encodeURIComponent(text)}`, icon: ChatGPTIcon },
+  { label: "Open in Claude", getUrl: () => "https://claude.ai/new", icon: ClaudeIcon },
+  { label: "Open in Gemini", getUrl: () => "https://gemini.google.com/", icon: GeminiIcon },
+]
 
 export function CopyButton({ text, onCopy, size = "default", label = "Copy" }: CopyButtonProps) {
   const sizeClasses = size === "sm" ? "h-8 text-xs" : "h-9 text-sm"
@@ -55,10 +56,10 @@ export function CopyButton({ text, onCopy, size = "default", label = "Copy" }: C
               onClick={(e) => {
                 e.stopPropagation()
                 onCopy(text)
-                window.open(platform.url, "_blank")
+                window.open(platform.getUrl(text), "_blank")
               }}
             >
-              <span className={`h-2 w-2 rounded-full ${platform.color} shrink-0`} />
+              <platform.icon className="h-4 w-4 shrink-0" />
               <span className="flex-1">{platform.label}</span>
               <ExternalLink className="h-3 w-3 opacity-50" />
             </DropdownMenuItem>

@@ -22,9 +22,11 @@ import {
   X,
 } from "lucide-react"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
+import { RatingButtons } from "@/components/prompts/RatingButtons"
 import { getTagColor } from "@/lib/tag-colors"
 import { fillVariables, variableToLabel, segmentPromptText } from "@/lib/variables"
 import type { Prompt } from "@/data/types"
+import type { RatingInfo } from "@/hooks/useRatings"
 
 interface PromptDrawerProps {
   prompt: Prompt | null
@@ -34,6 +36,8 @@ interface PromptDrawerProps {
   isFavorite: boolean
   onToggleFavorite: () => void
   onOpenFullView: () => void
+  rating: RatingInfo
+  onVote: (promptId: string, direction: "up" | "down") => void
 }
 
 export function PromptDrawer({
@@ -44,6 +48,8 @@ export function PromptDrawer({
   isFavorite,
   onToggleFavorite,
   onOpenFullView,
+  rating,
+  onVote,
 }: PromptDrawerProps) {
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [showVersionHistory, setShowVersionHistory] = useState(false)
@@ -121,6 +127,7 @@ export function PromptDrawer({
                   Trending
                 </span>
               )}
+              <RatingButtons promptId={prompt.id} rating={rating} onVote={onVote} size="sm" />
               <span>by {prompt.author}</span>
             </div>
 

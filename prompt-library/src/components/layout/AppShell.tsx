@@ -12,7 +12,7 @@ export function AppShell({ sidebar, header, children }: AppShellProps) {
       {sidebar}
       <div className="flex flex-1 flex-col overflow-hidden">
         {header}
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-6">{children}</main>
       </div>
     </div>
   )

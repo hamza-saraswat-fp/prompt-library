@@ -12,6 +12,7 @@ import {
   GitCommit,
 } from "lucide-react"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
+import { RatingButtons } from "@/components/prompts/RatingButtons"
 import { getTagColor } from "@/lib/tag-colors"
 import {
   fillVariables,
@@ -21,6 +22,7 @@ import {
 import { UseCaseShowcase } from "@/components/prompts/UseCaseShowcase"
 import { CommentsSection } from "@/components/prompts/CommentsSection"
 import type { Prompt } from "@/data/types"
+import type { RatingInfo } from "@/hooks/useRatings"
 
 interface PromptDetailViewProps {
   prompt: Prompt
@@ -31,6 +33,8 @@ interface PromptDetailViewProps {
   onOpenPrompt: (prompt: Prompt) => void
   isPromptFavorite: (id: string) => boolean
   onTogglePromptFavorite: (id: string) => void
+  rating: RatingInfo
+  onVote: (promptId: string, direction: "up" | "down") => void
 }
 
 export function PromptDetailView({
@@ -42,6 +46,8 @@ export function PromptDetailView({
   onOpenPrompt,
   isPromptFavorite,
   onTogglePromptFavorite,
+  rating,
+  onVote,
 }: PromptDetailViewProps) {
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {}
@@ -107,6 +113,8 @@ export function PromptDetailView({
             </span>
           </>
         )}
+        <span className="text-border">|</span>
+        <RatingButtons promptId={prompt.id} rating={rating} onVote={onVote} />
         <span className="text-border">|</span>
         <span>by {prompt.author}</span>
         <span className="text-border">|</span>

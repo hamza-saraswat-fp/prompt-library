@@ -10,10 +10,13 @@ import { PromptTable } from "@/components/prompts/PromptTable"
 import { PromptDrawer } from "@/components/prompts/PromptDrawer"
 import { CategoryPills } from "@/components/prompts/CategoryPills"
 import { PromptBundle } from "@/components/prompts/PromptBundle"
+import { HomePage } from "@/components/home/HomePage"
 import { SubmitPrompt } from "@/components/vision/SubmitPrompt"
 import { PromptPage } from "@/pages/PromptPage"
 import { useTheme } from "@/hooks/useTheme"
 import { useFavorites } from "@/hooks/useFavorites"
+import { useRecentlyUsed } from "@/hooks/useRecentlyUsed"
+import { useRatings } from "@/hooks/useRatings"
 import { prompts } from "@/data/prompts"
 import { getGroupById, getCategoriesForGroup, bundles } from "@/data/teams"
 import type { Prompt, Department } from "@/data/types"
@@ -47,9 +50,9 @@ function BrowsePage({
   handleOpenPrompt: (prompt: Prompt) => void
   isFavorite: (id: string) => boolean
   toggleFavorite: (id: string) => void
-  sortField: "title" | null
+  sortField: "title" | "rating" | null
   sortDirection: "asc" | "desc"
-  onSort: (field: "title") => void
+  onSort: (field: "title" | "rating") => void
 }) {
   return (
     <div className="space-y-4">
@@ -137,6 +140,8 @@ function App() {
   const navigate = useNavigate()
   const { isDark, toggle: toggleTheme } = useTheme()
   const { favorites, toggleFavorite, isFavorite } = useFavorites()
+  const { recentIds, addRecent } = useRecentlyUsed()
+  const { getRating, vote, getNetScore } = useRatings()
 
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
   const [showFavorites, setShowFavorites] = useState(false)
@@ -148,8 +153,10 @@ function App() {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [submitOpen, setSubmitOpen] = useState(false)
-  const [sortField, setSortField] = useState<"title" | null>(null)
+  const [sortField, setSortField] = useState<"title" | "rating" | null>(null)
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const [activeView, setActiveView] = useState<"home" | "browse">("home")
+  const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null)
   const [viewPreference, setViewPreference] = useState<"cards" | "table">(() =>
     (localStorage.getItem("view-pref") as "cards" | "table") || "cards"
   )
@@ -174,6 +181,8 @@ function App() {
     setShowFavorites(false)
     setSearchQuery("")
     setPreSearchState(null)
+    setSelectedBundleId(null)
+    setActiveView("browse")
     navigate("/")
   }
 
@@ -181,6 +190,29 @@ function App() {
     setShowFavorites(true)
     setSelectedGroup(null)
     setSelectedCategory(null)
+    setSearchQuery("")
+    setPreSearchState(null)
+    setSelectedBundleId(null)
+    setActiveView("browse")
+    navigate("/")
+  }
+
+  const handleGoHome = () => {
+    setActiveView("home")
+    setSelectedGroup(null)
+    setSelectedCategory(null)
+    setShowFavorites(false)
+    setSearchQuery("")
+    setPreSearchState(null)
+    setSelectedBundleId(null)
+    navigate("/")
+  }
+
+  const handleBundleClick = (bundleId: string) => {
+    setSelectedBundleId(bundleId)
+    setActiveView("browse")
+    setSelectedGroup(null)
+    setShowFavorites(false)
     setSearchQuery("")
     setPreSearchState(null)
     navigate("/")
@@ -208,6 +240,7 @@ function App() {
   const handleOpenPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt)
     setDrawerOpen(true)
+    addRecent(prompt.id)
   }
 
   const handleOpenFullView = () => {
@@ -250,6 +283,14 @@ function App() {
       return result.filter(matchesTags)
     }
 
+    if (selectedBundleId) {
+      const bundle = bundles.find((b) => b.id === selectedBundleId)
+      if (bundle) {
+        result = result.filter((p) => bundle.promptIds.includes(p.id))
+      }
+      return result.filter(matchesTags)
+    }
+
     if (selectedGroup) {
       const group = getGroupById(selectedGroup)
       if (group) {
@@ -261,17 +302,23 @@ function App() {
     }
 
     return result.filter(matchesTags)
-  }, [searchQuery, selectedGroup, selectedCategory, selectedTags, showFavorites, favorites])
+  }, [searchQuery, selectedGroup, selectedCategory, selectedTags, showFavorites, favorites, selectedBundleId])
 
   const sortedPrompts = useMemo(() => {
     if (!sortField) return filteredPrompts
+    if (sortField === "rating") {
+      return [...filteredPrompts].sort((a, b) => {
+        const cmp = getNetScore(b.id) - getNetScore(a.id)
+        return sortDirection === "asc" ? cmp : -cmp
+      })
+    }
     return [...filteredPrompts].sort((a, b) => {
       const cmp = a.title.localeCompare(b.title)
       return sortDirection === "asc" ? cmp : -cmp
     })
-  }, [filteredPrompts, sortField, sortDirection])
+  }, [filteredPrompts, sortField, sortDirection, getNetScore])
 
-  const handleSort = (field: "title") => {
+  const handleSort = (field: "title" | "rating") => {
     if (sortField === field) {
       if (sortDirection === "asc") {
         setSortDirection("desc")
@@ -291,9 +338,16 @@ function App() {
     ? "My Favorites"
     : searchQuery
       ? `Search results for "${searchQuery}"`
-      : selectedGroup
-        ? getGroupById(selectedGroup)?.name ?? "Prompts"
-        : "All Prompts"
+      : selectedBundleId
+        ? bundles.find((b) => b.id === selectedBundleId)?.name ?? "Bundle"
+        : selectedGroup
+          ? getGroupById(selectedGroup)?.name ?? "Prompts"
+          : "All Prompts"
+
+  const recentPrompts = useMemo(() =>
+    recentIds.map((id) => prompts.find((p) => p.id === id)).filter(Boolean) as Prompt[],
+    [recentIds]
+  )
 
   const isCardView = viewPreference === "cards"
 
@@ -309,6 +363,8 @@ function App() {
             collapsed={sidebarCollapsed}
             onToggleCollapsed={() => setSidebarCollapsed((prev) => !prev)}
             onSubmitPrompt={() => setSubmitOpen(true)}
+            onGoHome={handleGoHome}
+            activeView={activeView}
           />
         }
         header={
@@ -323,6 +379,9 @@ function App() {
             onViewPreferenceChange={handleViewPreferenceChange}
             isDark={isDark}
             onToggleTheme={toggleTheme}
+            sortField={sortField}
+            onSort={handleSort}
+            isHomeView={activeView === "home"}
           />
         }
       >
@@ -330,23 +389,41 @@ function App() {
           <Route
             path="/"
             element={
-              <BrowsePage
-                filteredPrompts={sortedPrompts}
-                viewTitle={viewTitle}
-                isCardView={isCardView}
-                selectedGroup={selectedGroup}
-                categories={categories}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                showFavorites={showFavorites}
-                searchQuery={searchQuery}
-                handleOpenPrompt={handleOpenPrompt}
-                isFavorite={isFavorite}
-                toggleFavorite={toggleFavorite}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-              />
+              activeView === "home" ? (
+                <HomePage
+                  searchQuery={searchQuery}
+                  onSearchChange={handleSearch}
+                  bundles={bundles}
+                  onBundleClick={handleBundleClick}
+                  prompts={sortedPrompts}
+                  recentPrompts={recentPrompts}
+                  onOpenPrompt={handleOpenPrompt}
+                  isFavorite={isFavorite}
+                  toggleFavorite={toggleFavorite}
+                  onCopy={handleCopy}
+                  onInteraction={addRecent}
+                  getRating={getRating}
+                  onVote={vote}
+                />
+              ) : (
+                <BrowsePage
+                  filteredPrompts={sortedPrompts}
+                  viewTitle={viewTitle}
+                  isCardView={isCardView}
+                  selectedGroup={selectedGroup}
+                  categories={categories}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  showFavorites={showFavorites}
+                  searchQuery={searchQuery}
+                  handleOpenPrompt={handleOpenPrompt}
+                  isFavorite={isFavorite}
+                  toggleFavorite={toggleFavorite}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  onSort={handleSort}
+                />
+              )
             }
           />
           <Route path="/prompts/:id" element={<PromptPage />} />
@@ -361,6 +438,8 @@ function App() {
         isFavorite={selectedPrompt ? isFavorite(selectedPrompt.id) : false}
         onToggleFavorite={() => selectedPrompt && toggleFavorite(selectedPrompt.id)}
         onOpenFullView={handleOpenFullView}
+        rating={selectedPrompt ? getRating(selectedPrompt.id) : { up: 0, down: 0, userVote: null, net: 0 }}
+        onVote={vote}
       />
 
       <SubmitPrompt open={submitOpen} onOpenChange={setSubmitOpen} />

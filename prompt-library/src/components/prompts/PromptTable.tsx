@@ -15,9 +15,9 @@ import type { Prompt } from "@/data/types"
 interface PromptTableProps {
   prompts: Prompt[]
   onClick: (prompt: Prompt) => void
-  sortField: "title" | null
+  sortField: "title" | "rating" | null
   sortDirection: "asc" | "desc"
-  onSort: (field: "title") => void
+  onSort: (field: "title" | "rating") => void
 }
 
 export function PromptTable({ prompts, onClick, sortField, sortDirection, onSort }: PromptTableProps) {
