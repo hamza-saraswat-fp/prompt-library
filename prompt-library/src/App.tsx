@@ -10,6 +10,7 @@ import { PromptTable } from "@/components/prompts/PromptTable"
 import { PromptDrawer } from "@/components/prompts/PromptDrawer"
 import { CategoryPills } from "@/components/prompts/CategoryPills"
 import { PromptBundle } from "@/components/prompts/PromptBundle"
+import { AuthGuard } from "@/components/auth/AuthGuard"
 import { HomePage } from "@/components/home/HomePage"
 import { SubmitPrompt } from "@/components/vision/SubmitPrompt"
 import { PromptPage } from "@/pages/PromptPage"
@@ -352,7 +353,7 @@ function App() {
   const isCardView = viewPreference === "cards"
 
   return (
-    <>
+    <AuthGuard>
       <AppShell
         sidebar={
           <Sidebar
@@ -444,7 +445,7 @@ function App() {
 
       <SubmitPrompt open={submitOpen} onOpenChange={setSubmitOpen} />
       <Toaster position="bottom-right" />
-    </>
+    </AuthGuard>
   )
 }
 

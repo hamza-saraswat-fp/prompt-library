@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Search, X, Sun, Moon, Tag, Check, LayoutGrid, Table, ArrowUpDown } from "lucide-react"
+import { UserMenu } from "@/components/auth/UserMenu"
 import { TAGS } from "@/data/types"
 import type { Department } from "@/data/types"
 
@@ -186,6 +187,9 @@ export function Header({
       >
         {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </Button>
+
+      {/* User Menu */}
+      <UserMenu />
     </header>
   )
 }
