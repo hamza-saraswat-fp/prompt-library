@@ -11,8 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { useCaseGroups, categories } from "@/data/teams"
-import { DEPARTMENTS } from "@/data/types"
+import { useSupabaseData } from "@/hooks/useSupabaseData"
 import { extractVariables } from "@/lib/variables"
 import type { ModelType, Department } from "@/data/types"
 
@@ -24,6 +23,7 @@ interface SubmitPromptProps {
 }
 
 export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
+  const { groups: useCaseGroups, categories, departments: DEPARTMENTS } = useSupabaseData()
   const [title, setTitle] = useState("")
   const [overview, setOverview] = useState("")
   const [promptText, setPromptText] = useState("")

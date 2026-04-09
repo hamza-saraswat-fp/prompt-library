@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Search, X, Sun, Moon, Tag, Check, LayoutGrid, Table, ArrowUpDown } from "lucide-react"
 import { UserMenu } from "@/components/auth/UserMenu"
-import { TAGS } from "@/data/types"
 import type { Department } from "@/data/types"
 
 interface HeaderProps {
@@ -26,6 +25,7 @@ interface HeaderProps {
   isHomeView?: boolean
   sortField?: "title" | "rating" | null
   onSort?: (field: "title" | "rating") => void
+  allTags?: string[]
 }
 
 export function Header({
@@ -40,6 +40,7 @@ export function Header({
   isHomeView,
   sortField,
   onSort,
+  allTags = [],
 }: HeaderProps) {
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -95,7 +96,7 @@ export function Header({
               <DropdownMenuSeparator />
             </>
           )}
-          {TAGS.map((tag) => (
+          {allTags.map((tag) => (
             <DropdownMenuItem
               key={tag}
               onClick={() => toggleTag(tag)}

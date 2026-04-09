@@ -8,9 +8,8 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
-import { getCategoryById } from "@/data/teams"
 import { getTagColor } from "@/lib/tag-colors"
-import type { Prompt } from "@/data/types"
+import type { Prompt, Category } from "@/data/types"
 
 interface PromptTableProps {
   prompts: Prompt[]
@@ -18,9 +17,10 @@ interface PromptTableProps {
   sortField: "title" | "rating" | null
   sortDirection: "asc" | "desc"
   onSort: (field: "title" | "rating") => void
+  getCategoryById: (id: string) => Category | undefined
 }
 
-export function PromptTable({ prompts, onClick, sortField, sortDirection, onSort }: PromptTableProps) {
+export function PromptTable({ prompts, onClick, sortField, sortDirection, onSort, getCategoryById }: PromptTableProps) {
   const SortIcon = sortField === "title"
     ? sortDirection === "asc" ? ArrowUp : ArrowDown
     : ArrowUpDown

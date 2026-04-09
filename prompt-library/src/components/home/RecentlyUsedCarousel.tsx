@@ -1,15 +1,15 @@
 import { useRef, useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { getCategoryById } from "@/data/teams"
-import type { Prompt } from "@/data/types"
+import type { Prompt, Category } from "@/data/types"
 
 interface RecentlyUsedCarouselProps {
   prompts: Prompt[]
   onOpenPrompt: (prompt: Prompt) => void
+  getCategoryById: (id: string) => Category | undefined
 }
 
-export function RecentlyUsedCarousel({ prompts, onOpenPrompt }: RecentlyUsedCarouselProps) {
+export function RecentlyUsedCarousel({ prompts, onOpenPrompt, getCategoryById }: RecentlyUsedCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)

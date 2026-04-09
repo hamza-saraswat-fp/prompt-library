@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { useCaseGroups } from "@/data/teams"
+import type { UseCaseGroup } from "@/data/types"
 import {
   Library,
   Heart,
@@ -37,6 +37,7 @@ interface SidebarProps {
   onSubmitPrompt: () => void
   onGoHome: () => void
   activeView: "home" | "browse"
+  groups: UseCaseGroup[]
 }
 
 export function Sidebar({
@@ -49,6 +50,7 @@ export function Sidebar({
   onSubmitPrompt,
   onGoHome,
   activeView,
+  groups,
 }: SidebarProps) {
   return (
     <aside
@@ -102,7 +104,7 @@ export function Sidebar({
           <Separator className="my-2" />
 
           {/* Use-Case Groups */}
-          {useCaseGroups.map((group) => {
+          {groups.map((group) => {
             const Icon = iconMap[group.icon] ?? Library
             return (
               <Button

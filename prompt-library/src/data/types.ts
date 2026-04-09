@@ -1,38 +1,8 @@
 export type ModelType = "ChatGPT" | "Claude" | "Gemini" | "Model-Agnostic"
 
-export const DEPARTMENTS = [
-  "Sales",
-  "Customer Success",
-  "Implementation",
-  "Engineering",
-  "Product",
-  "Marketing",
-  "QA",
-] as const
-
-export type Department = (typeof DEPARTMENTS)[number]
-
-export const TAGS = [
-  // Department tags
-  "Sales",
-  "Customer Success",
-  "Implementation",
-  "Engineering",
-  "Product",
-  "Marketing",
-  "QA",
-  // Workflow tags
-  "Onboarding",
-  "Documentation",
-  "Troubleshooting",
-  "Customer-Facing",
-  "Internal",
-  "Outreach",
-  "Analysis",
-  "Automation",
-] as const
-
-export type Tag = (typeof TAGS)[number]
+// Department and Tag types — values now come from Supabase `tags` table
+export type Department = string
+export type Tag = string
 
 export interface Variable {
   name: string

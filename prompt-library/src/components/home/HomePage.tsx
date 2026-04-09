@@ -2,7 +2,7 @@ import { HeroSearch } from "./HeroSearch"
 import { BundleCarousel } from "./BundleCarousel"
 import { RecentlyUsedCarousel } from "./RecentlyUsedCarousel"
 import { PromptFeed } from "./PromptFeed"
-import type { Prompt, Bundle } from "@/data/types"
+import type { Prompt, Bundle, Category } from "@/data/types"
 import type { RatingInfo } from "@/hooks/useRatings"
 
 interface HomePageProps {
@@ -19,6 +19,7 @@ interface HomePageProps {
   onInteraction: (promptId: string) => void
   getRating: (promptId: string) => RatingInfo
   onVote: (promptId: string, direction: "up" | "down") => void
+  getCategoryById: (id: string) => Category | undefined
 }
 
 export function HomePage({
@@ -35,12 +36,13 @@ export function HomePage({
   onInteraction,
   getRating,
   onVote,
+  getCategoryById,
 }: HomePageProps) {
   return (
     <div className="space-y-8 min-w-0">
       <HeroSearch searchQuery={searchQuery} onSearchChange={onSearchChange} />
       {!searchQuery && <BundleCarousel bundles={bundles} onBundleClick={onBundleClick} />}
-      {!searchQuery && <RecentlyUsedCarousel prompts={recentPrompts} onOpenPrompt={onOpenPrompt} />}
+      {!searchQuery && <RecentlyUsedCarousel prompts={recentPrompts} onOpenPrompt={onOpenPrompt} getCategoryById={getCategoryById} />}
       <PromptFeed
         prompts={prompts}
         searchQuery={searchQuery}

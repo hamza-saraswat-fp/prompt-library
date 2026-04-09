@@ -18,8 +18,8 @@ import { useTheme } from "@/hooks/useTheme"
 import { useFavorites } from "@/hooks/useFavorites"
 import { useRecentlyUsed } from "@/hooks/useRecentlyUsed"
 import { useRatings } from "@/hooks/useRatings"
-import { prompts } from "@/data/prompts"
-import { getGroupById, getCategoriesForGroup, bundles } from "@/data/teams"
+import { useSupabaseData } from "@/hooks/useSupabaseData"
+import { initTagColors } from "@/lib/tag-colors"
 import type { Prompt, Department } from "@/data/types"
 
 function BrowsePage({
@@ -38,6 +38,7 @@ function BrowsePage({
   sortField,
   sortDirection,
   onSort,
+  getCategoryById,
 }: {
   filteredPrompts: Prompt[]
   viewTitle: string
@@ -54,6 +55,7 @@ function BrowsePage({
   sortField: "title" | "rating" | null
   sortDirection: "asc" | "desc"
   onSort: (field: "title" | "rating") => void
+  getCategoryById: (id: string) => { id: string; name: string; groupId: string } | undefined
 }) {
   return (
     <div className="space-y-4">
@@ -131,6 +133,7 @@ function BrowsePage({
           sortField={sortField}
           sortDirection={sortDirection}
           onSort={onSort}
+          getCategoryById={getCategoryById}
         />
       )}
     </div>
@@ -143,6 +146,14 @@ function App() {
   const { favorites, toggleFavorite, isFavorite } = useFavorites()
   const { recentIds, addRecent } = useRecentlyUsed()
   const { getRating, vote, getNetScore } = useRatings()
+  const {
+    prompts, groups, bundles, allTags, departments,
+    loading: dataLoading, error: dataError,
+    getGroupById, getCategoriesForGroup, getCategoryById,
+  } = useSupabaseData()
+
+  // Initialize tag colors once departments are loaded
+  if (departments.length > 0) initTagColors(departments)
 
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
   const [showFavorites, setShowFavorites] = useState(false)
@@ -303,7 +314,7 @@ function App() {
     }
 
     return result.filter(matchesTags)
-  }, [searchQuery, selectedGroup, selectedCategory, selectedTags, showFavorites, favorites, selectedBundleId])
+  }, [prompts, bundles, searchQuery, selectedGroup, selectedCategory, selectedTags, showFavorites, favorites, selectedBundleId, getGroupById])
 
   const sortedPrompts = useMemo(() => {
     if (!sortField) return filteredPrompts
@@ -347,10 +358,33 @@ function App() {
 
   const recentPrompts = useMemo(() =>
     recentIds.map((id) => prompts.find((p) => p.id === id)).filter(Boolean) as Prompt[],
-    [recentIds]
+    [recentIds, prompts]
   )
 
   const isCardView = viewPreference === "cards"
+
+  if (dataLoading) {
+    return (
+      <AuthGuard>
+        <div className="flex h-screen items-center justify-center bg-background">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      </AuthGuard>
+    )
+  }
+
+  if (dataError) {
+    return (
+      <AuthGuard>
+        <div className="flex h-screen items-center justify-center bg-background">
+          <div className="text-center space-y-2">
+            <p className="text-lg font-medium text-destructive">Failed to load data</p>
+            <p className="text-sm text-muted-foreground">{dataError}</p>
+          </div>
+        </div>
+      </AuthGuard>
+    )
+  }
 
   return (
     <AuthGuard>
@@ -366,6 +400,7 @@ function App() {
             onSubmitPrompt={() => setSubmitOpen(true)}
             onGoHome={handleGoHome}
             activeView={activeView}
+            groups={groups}
           />
         }
         header={
@@ -383,6 +418,7 @@ function App() {
             sortField={sortField}
             onSort={handleSort}
             isHomeView={activeView === "home"}
+            allTags={allTags}
           />
         }
       >
@@ -405,6 +441,7 @@ function App() {
                   onInteraction={addRecent}
                   getRating={getRating}
                   onVote={vote}
+                  getCategoryById={getCategoryById}
                 />
               ) : (
                 <BrowsePage
@@ -423,6 +460,7 @@ function App() {
                   sortField={sortField}
                   sortDirection={sortDirection}
                   onSort={handleSort}
+                  getCategoryById={getCategoryById}
                 />
               )
             }
