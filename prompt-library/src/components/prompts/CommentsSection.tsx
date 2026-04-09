@@ -10,7 +10,7 @@ interface DbComment {
   user_id: string
   text: string
   created_at: string
-  profiles: { display_name: string | null } | null
+  profiles: { display_name: string | null }[] | { display_name: string | null } | null
 }
 
 interface CommentsSectionProps {
@@ -86,7 +86,7 @@ export function CommentsSection({ promptId }: CommentsSectionProps) {
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">
-                    {comment.profiles?.display_name ?? "Anonymous"}
+                    {(Array.isArray(comment.profiles) ? comment.profiles[0]?.display_name : comment.profiles?.display_name) ?? "Anonymous"}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {new Date(comment.created_at).toLocaleDateString()}
