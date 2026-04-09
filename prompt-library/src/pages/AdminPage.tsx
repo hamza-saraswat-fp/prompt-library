@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, useSearchParams } from "react-router-dom"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { useAuth } from "@/contexts/AuthContext"
 import { PromptDrawer } from "@/components/prompts/PromptDrawer"
@@ -14,15 +14,19 @@ import { useFavorites } from "@/hooks/useFavorites"
 import { toast } from "sonner"
 import type { Prompt } from "@/data/types"
 
+const ADMIN_KEY = "fieldpulse"
+
 export function AdminPage() {
   const { profile } = useAuth()
+  const [searchParams] = useSearchParams()
   const { getRating, vote } = useRatings()
   const { isFavorite, toggleFavorite } = useFavorites()
   const [previewPrompt, setPreviewPrompt] = useState<Prompt | null>(null)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [pendingCount, setPendingCount] = useState(0)
 
-  if (profile?.role !== "admin") {
+  const hasAdminKey = searchParams.get("key") === ADMIN_KEY
+  if (profile?.role !== "admin" && !hasAdminKey) {
     return <Navigate to="/" replace />
   }
 
