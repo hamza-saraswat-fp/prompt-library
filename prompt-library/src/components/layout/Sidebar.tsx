@@ -1,11 +1,15 @@
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { supabase } from "@/lib/supabase"
 import type { UseCaseGroup } from "@/data/types"
 import {
   Library,
   Heart,
+  FileText,
   Plus,
   ChevronLeft,
   ChevronRight,
@@ -16,6 +20,7 @@ import {
   Target,
   Palette,
   Zap,
+  Shield,
 } from "lucide-react"
 
 const iconMap: Record<string, React.ElementType> = {
@@ -38,6 +43,11 @@ interface SidebarProps {
   onGoHome: () => void
   activeView: "home" | "browse"
   groups: UseCaseGroup[]
+  isAdmin?: boolean
+  onAdminClick?: () => void
+  isAdminView?: boolean
+  onMyPrompts?: () => void
+  isMyPromptsView?: boolean
 }
 
 export function Sidebar({
@@ -51,7 +61,21 @@ export function Sidebar({
   onGoHome,
   activeView,
   groups,
+  isAdmin,
+  onAdminClick,
+  isAdminView,
+  onMyPrompts,
+  isMyPromptsView,
 }: SidebarProps) {
+  const [pendingCount, setPendingCount] = useState(0)
+
+  useEffect(() => {
+    if (!isAdmin) return
+    supabase.from("prompts").select("id", { count: "exact", head: true })
+      .eq("status", "pending_review")
+      .then(({ count }) => setPendingCount(count ?? 0))
+  }, [isAdmin])
+
   return (
     <aside
       className={cn(
@@ -136,6 +160,42 @@ export function Sidebar({
             <Heart className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="ml-2">My Favorites</span>}
           </Button>
+
+          {/* My Prompts */}
+          <Button
+            variant={isMyPromptsView ? "secondary" : "ghost"}
+            className={cn(
+              "w-full justify-start cursor-pointer",
+              collapsed && "justify-center px-2"
+            )}
+            onClick={onMyPrompts}
+          >
+            <FileText className="h-4 w-4 shrink-0" />
+            {!collapsed && <span className="ml-2">My Prompts</span>}
+          </Button>
+
+          {/* Admin */}
+          {isAdmin && (
+            <>
+              <Separator className="my-2" />
+              <Button
+                variant={isAdminView ? "secondary" : "ghost"}
+                className={cn(
+                  "w-full justify-start cursor-pointer",
+                  collapsed && "justify-center px-2"
+                )}
+                onClick={onAdminClick}
+              >
+                <Shield className="h-4 w-4 shrink-0" />
+                {!collapsed && <span className="ml-2">Admin</span>}
+                {!collapsed && pendingCount > 0 && (
+                  <Badge variant="destructive" className="ml-auto text-[10px] h-5 min-w-5 px-1">
+                    {pendingCount}
+                  </Badge>
+                )}
+              </Button>
+            </>
+          )}
         </div>
       </ScrollArea>
 

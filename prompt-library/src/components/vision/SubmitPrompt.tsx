@@ -86,7 +86,7 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
       bundle_id: null,
       author: authorName,
       created_by: user.id,
-      status: "draft",
+      status: "pending_review",
       visibility: "private",
       version_history: [{ version: 1, date: new Date().toISOString().split("T")[0], author: authorName, changeDescription: "Initial submission" }],
       use_cases: [],

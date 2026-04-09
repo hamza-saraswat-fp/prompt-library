@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react"
-import { Routes, Route, useNavigate } from "react-router-dom"
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
 import { Toaster, toast } from "sonner"
 import { AppShell } from "@/components/layout/AppShell"
 import { Sidebar } from "@/components/layout/Sidebar"
@@ -14,11 +14,14 @@ import { AuthGuard } from "@/components/auth/AuthGuard"
 import { HomePage } from "@/components/home/HomePage"
 import { SubmitPrompt } from "@/components/vision/SubmitPrompt"
 import { PromptPage } from "@/pages/PromptPage"
+import { AdminPage } from "@/pages/AdminPage"
+import { MyPrompts } from "@/components/prompts/MyPrompts"
 import { useTheme } from "@/hooks/useTheme"
 import { useFavorites } from "@/hooks/useFavorites"
 import { useRecentlyUsed } from "@/hooks/useRecentlyUsed"
 import { useRatings } from "@/hooks/useRatings"
 import { useSupabaseData } from "@/hooks/useSupabaseData"
+import { useAuth } from "@/contexts/AuthContext"
 import { initTagColors } from "@/lib/tag-colors"
 import type { Prompt, Department, Bundle } from "@/data/types"
 
@@ -144,6 +147,8 @@ function BrowsePage({
 
 function App() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { profile } = useAuth()
   const { isDark, toggle: toggleTheme } = useTheme()
   const { favorites, toggleFavorite, isFavorite } = useFavorites()
   const { recentIds, addRecent } = useRecentlyUsed()
@@ -403,6 +408,11 @@ function App() {
             onGoHome={handleGoHome}
             activeView={activeView}
             groups={groups}
+            isAdmin={profile?.role === "admin"}
+            onAdminClick={() => navigate("/admin")}
+            isAdminView={location.pathname.startsWith("/admin")}
+            onMyPrompts={() => navigate("/my-prompts")}
+            isMyPromptsView={location.pathname === "/my-prompts"}
           />
         }
         header={
@@ -469,6 +479,8 @@ function App() {
             }
           />
           <Route path="/prompts/:id" element={<PromptPage />} />
+          <Route path="/admin/*" element={<AdminPage />} />
+          <Route path="/my-prompts" element={<MyPrompts />} />
         </Routes>
       </AppShell>
 
