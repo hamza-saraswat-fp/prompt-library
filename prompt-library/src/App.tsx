@@ -20,13 +20,14 @@ import { useRecentlyUsed } from "@/hooks/useRecentlyUsed"
 import { useRatings } from "@/hooks/useRatings"
 import { useSupabaseData } from "@/hooks/useSupabaseData"
 import { initTagColors } from "@/lib/tag-colors"
-import type { Prompt, Department } from "@/data/types"
+import type { Prompt, Department, Bundle } from "@/data/types"
 
 function BrowsePage({
   filteredPrompts,
   viewTitle,
   isCardView,
   selectedGroup,
+  bundles,
   categories,
   selectedCategory,
   setSelectedCategory,
@@ -44,6 +45,7 @@ function BrowsePage({
   viewTitle: string
   isCardView: boolean
   selectedGroup: string | null
+  bundles: Bundle[]
   categories: { id: string; name: string; groupId: string }[]
   selectedCategory: string | null
   setSelectedCategory: (id: string | null) => void
@@ -449,6 +451,7 @@ function App() {
                   viewTitle={viewTitle}
                   isCardView={isCardView}
                   selectedGroup={selectedGroup}
+                  bundles={bundles}
                   categories={categories}
                   selectedCategory={selectedCategory}
                   setSelectedCategory={setSelectedCategory}
