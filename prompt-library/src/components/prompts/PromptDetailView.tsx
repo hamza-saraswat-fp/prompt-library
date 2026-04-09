@@ -242,7 +242,7 @@ export function PromptDetailView({
       </div>
 
       <Separator />
-      <CommentsSection promptId={prompt.id} initialComments={prompt.comments} />
+      <CommentsSection promptId={prompt.id} />
 
       {/* Related Prompts in Bundle */}
       {bundleSiblings.length > 0 && (

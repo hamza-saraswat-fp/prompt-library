@@ -12,6 +12,8 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { useSupabaseData } from "@/hooks/useSupabaseData"
+import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/lib/supabase"
 import { extractVariables } from "@/lib/variables"
 import type { ModelType, Department } from "@/data/types"
 
@@ -22,8 +24,15 @@ interface SubmitPromptProps {
   onOpenChange: (open: boolean) => void
 }
 
+function generateId(title: string): string {
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40)
+  const suffix = Math.random().toString(36).slice(2, 6)
+  return `${slug}-${suffix}`
+}
+
 export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
   const { groups: useCaseGroups, categories, departments: DEPARTMENTS } = useSupabaseData()
+  const { user, profile } = useAuth()
   const [title, setTitle] = useState("")
   const [overview, setOverview] = useState("")
   const [promptText, setPromptText] = useState("")
@@ -52,8 +61,44 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
     departments.length > 0 &&
     categoryId !== ""
 
-  const handleSubmit = () => {
-    if (!canSubmit) return
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleSubmit = async () => {
+    if (!canSubmit || !user) return
+    setSubmitting(true)
+
+    const variables = extractVariables(promptText).map((name) => ({ name, description: "" }))
+    const authorName = profile?.display_name ?? "Anonymous"
+
+    const { error } = await supabase.from("prompts").insert({
+      id: generateId(title),
+      title: title.trim(),
+      overview: overview.trim(),
+      prompt_text: promptText.trim(),
+      departments,
+      category_id: categoryId,
+      models: selectedModels.length > 0 ? selectedModels : ["Model-Agnostic"],
+      variables,
+      tags: [...departments],
+      version: 1,
+      copy_count: 0,
+      is_trending: false,
+      bundle_id: null,
+      author: authorName,
+      created_by: user.id,
+      status: "draft",
+      visibility: "private",
+      version_history: [{ version: 1, date: new Date().toISOString().split("T")[0], author: authorName, changeDescription: "Initial submission" }],
+      use_cases: [],
+      comments: [],
+    })
+
+    setSubmitting(false)
+    if (error) {
+      toast.error("Failed to submit prompt: " + error.message)
+      return
+    }
+
     toast.success("Prompt submitted for review!")
     setTitle("")
     setOverview("")
@@ -176,8 +221,8 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
           <Button variant="outline" className="cursor-pointer" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button className="cursor-pointer" onClick={handleSubmit} disabled={!canSubmit}>
-            Submit for Review
+          <Button className="cursor-pointer" onClick={handleSubmit} disabled={!canSubmit || submitting}>
+            {submitting ? "Submitting..." : "Submit for Review"}
           </Button>
         </DialogFooter>
       </DialogContent>

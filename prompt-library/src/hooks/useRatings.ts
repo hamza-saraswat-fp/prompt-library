@@ -1,12 +1,6 @@
-import { useState, useCallback } from "react"
-
-const STORAGE_KEY = "prompt-library-ratings"
-
-interface PromptRating {
-  up: number
-  down: number
-  userVote: "up" | "down" | null
-}
+import { useState, useEffect, useCallback } from "react"
+import { supabase } from "@/lib/supabase"
+import { useAuth } from "@/contexts/AuthContext"
 
 export interface RatingInfo {
   up: number
@@ -15,62 +9,97 @@ export interface RatingInfo {
   net: number
 }
 
-type RatingsMap = Record<string, PromptRating>
-
-function loadRatings(): RatingsMap {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : {}
-  } catch {
-    return {}
-  }
-}
+type VoteDirection = "up" | "down"
 
 export function useRatings() {
-  const [ratings, setRatings] = useState<RatingsMap>(loadRatings)
+  const { user } = useAuth()
+  const [userVotes, setUserVotes] = useState<Record<string, VoteDirection>>({})
+  const [aggregates, setAggregates] = useState<Record<string, { up: number; down: number }>>({})
+
+  useEffect(() => {
+    if (!user) return
+
+    // Fetch user's own votes + aggregates in parallel
+    Promise.all([
+      supabase.from("user_ratings").select("prompt_id, vote").eq("user_id", user.id),
+      supabase.from("prompt_ratings_summary").select("*"),
+    ]).then(([votesRes, aggRes]) => {
+      if (votesRes.data) {
+        const votes: Record<string, VoteDirection> = {}
+        for (const row of votesRes.data) {
+          votes[row.prompt_id] = row.vote as VoteDirection
+        }
+        setUserVotes(votes)
+      }
+      if (aggRes.data) {
+        const agg: Record<string, { up: number; down: number }> = {}
+        for (const row of aggRes.data) {
+          agg[row.prompt_id] = { up: Number(row.up_count), down: Number(row.down_count) }
+        }
+        setAggregates(agg)
+      }
+    })
+  }, [user])
 
   const getRating = useCallback(
     (promptId: string): RatingInfo => {
-      const r = ratings[promptId] ?? { up: 0, down: 0, userVote: null }
-      return { ...r, net: r.up - r.down }
+      const agg = aggregates[promptId] ?? { up: 0, down: 0 }
+      return { up: agg.up, down: agg.down, userVote: userVotes[promptId] ?? null, net: agg.up - agg.down }
     },
-    [ratings]
+    [userVotes, aggregates]
   )
 
   const getNetScore = useCallback(
     (promptId: string): number => {
-      const r = ratings[promptId]
-      return r ? r.up - r.down : 0
+      const agg = aggregates[promptId]
+      return agg ? agg.up - agg.down : 0
     },
-    [ratings]
+    [aggregates]
   )
 
-  const vote = useCallback((promptId: string, direction: "up" | "down") => {
-    setRatings((prev) => {
-      const current = prev[promptId] ?? { up: 0, down: 0, userVote: null }
-      const next = { ...current }
+  const vote = useCallback(
+    (promptId: string, direction: VoteDirection) => {
+      if (!user) return
+      const currentVote = userVotes[promptId] ?? null
 
-      if (current.userVote === direction) {
-        // Toggle off
-        next[direction] = Math.max(0, next[direction] - 1)
-        next.userVote = null
-      } else if (current.userVote === null) {
-        // New vote
-        next[direction] += 1
-        next.userVote = direction
+      if (currentVote === direction) {
+        // Toggle off — delete the row
+        setUserVotes((prev) => { const n = { ...prev }; delete n[promptId]; return n })
+        setAggregates((prev) => {
+          const agg = prev[promptId] ?? { up: 0, down: 0 }
+          return { ...prev, [promptId]: { ...agg, [direction]: Math.max(0, agg[direction] - 1) } }
+        })
+        supabase.from("user_ratings").delete().eq("user_id", user.id).eq("prompt_id", promptId)
+          .then(({ error }) => { if (error) console.error("Failed to delete vote:", error) })
+      } else if (currentVote === null) {
+        // New vote — insert
+        setUserVotes((prev) => ({ ...prev, [promptId]: direction }))
+        setAggregates((prev) => {
+          const agg = prev[promptId] ?? { up: 0, down: 0 }
+          return { ...prev, [promptId]: { ...agg, [direction]: agg[direction] + 1 } }
+        })
+        supabase.from("user_ratings").insert({ user_id: user.id, prompt_id: promptId, vote: direction })
+          .then(({ error }) => { if (error) console.error("Failed to insert vote:", error) })
       } else {
-        // Switch vote
-        const opposite = current.userVote
-        next[opposite] = Math.max(0, next[opposite] - 1)
-        next[direction] += 1
-        next.userVote = direction
+        // Switch vote — update
+        setUserVotes((prev) => ({ ...prev, [promptId]: direction }))
+        setAggregates((prev) => {
+          const agg = prev[promptId] ?? { up: 0, down: 0 }
+          return {
+            ...prev,
+            [promptId]: {
+              [currentVote]: Math.max(0, agg[currentVote] - 1),
+              [direction]: agg[direction] + 1,
+            } as { up: number; down: number },
+          }
+        })
+        supabase.from("user_ratings").update({ vote: direction, updated_at: new Date().toISOString() })
+          .eq("user_id", user.id).eq("prompt_id", promptId)
+          .then(({ error }) => { if (error) console.error("Failed to update vote:", error) })
       }
-
-      const updated = { ...prev, [promptId]: next }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-      return updated
-    })
-  }, [])
+    },
+    [user, userVotes]
+  )
 
   return { getRating, vote, getNetScore }
 }
