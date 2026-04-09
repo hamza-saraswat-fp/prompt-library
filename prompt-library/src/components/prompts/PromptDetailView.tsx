@@ -1,23 +1,23 @@
 import { useState, useMemo } from "react"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { PromptCard } from "@/components/prompts/PromptCard"
 import {
-  Copy,
   Heart,
   TrendingUp,
   BarChart3,
   GitCommit,
 } from "lucide-react"
+import { toast } from "sonner"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
+import { PromptContent } from "@/components/prompts/PromptContent"
 import { RatingButtons } from "@/components/prompts/RatingButtons"
+import { useAuth } from "@/contexts/AuthContext"
 import { getTagColor } from "@/lib/tag-colors"
 import {
   fillVariables,
   variableToLabel,
-  segmentPromptText,
 } from "@/lib/variables"
 import { UseCaseShowcase } from "@/components/prompts/UseCaseShowcase"
 import { CommentsSection } from "@/components/prompts/CommentsSection"
@@ -49,6 +49,7 @@ export function PromptDetailView({
   rating,
   onVote,
 }: PromptDetailViewProps) {
+  const { user } = useAuth()
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {}
   )
@@ -56,11 +57,6 @@ export function PromptDetailView({
   const filledText = useMemo(
     () => fillVariables(prompt.promptText, variableValues),
     [prompt, variableValues]
-  )
-
-  const segments = useMemo(
-    () => segmentPromptText(filledText),
-    [filledText]
   )
 
   const hasVariables = prompt.variables.length > 0
@@ -81,7 +77,7 @@ export function PromptDetailView({
         </div>
         <button
           className="shrink-0 cursor-pointer text-muted-foreground hover:text-red-500 transition-colors p-2 rounded-md hover:bg-muted"
-          onClick={onToggleFavorite}
+          onClick={() => { if (!user) { toast.info("Sign in to use favorites"); return } onToggleFavorite() }}
         >
           <Heart
             className={`h-6 w-6 ${isFavorite ? "fill-red-500 text-red-500" : ""}`}
@@ -128,32 +124,8 @@ export function PromptDetailView({
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Left: Prompt text */}
           <div className="lg:col-span-3 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Prompt Template</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="cursor-pointer text-muted-foreground"
-                onClick={() => onCopy(prompt.promptText)}
-              >
-                <Copy className="h-3.5 w-3.5 mr-1" />
-                Copy raw
-              </Button>
-            </div>
-            <div className="rounded-lg bg-muted p-6 text-sm font-mono whitespace-pre-wrap leading-relaxed">
-              {segments.map((seg) =>
-                seg.isVariable ? (
-                  <span
-                    key={seg.key}
-                    className="rounded bg-primary/10 px-1 py-0.5 text-primary font-medium"
-                  >
-                    {seg.text}
-                  </span>
-                ) : (
-                  <span key={seg.key}>{seg.text}</span>
-                )
-              )}
-            </div>
+            <h2 className="text-lg font-semibold">Prompt Template</h2>
+            <PromptContent text={filledText} onCopy={onCopy} />
           </div>
 
           {/* Right: Variables + Preview */}
@@ -193,9 +165,7 @@ export function PromptDetailView({
             <h2 className="text-lg font-semibold">Prompt</h2>
             <CopyButton text={prompt.promptText} onCopy={onCopy} />
           </div>
-          <div className="rounded-lg bg-muted p-6 text-sm font-mono whitespace-pre-wrap leading-relaxed max-w-4xl">
-            {prompt.promptText}
-          </div>
+          <PromptContent text={prompt.promptText} onCopy={onCopy} />
         </div>
       )}
 

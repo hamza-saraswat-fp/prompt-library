@@ -107,24 +107,28 @@ export function CommentsSection({ promptId }: CommentsSectionProps) {
         </div>
       )}
 
-      <div className="space-y-2">
-        <textarea
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          placeholder="Share your experience or feedback on this prompt..."
-          rows={3}
-          value={newText}
-          onChange={(e) => setNewText(e.target.value)}
-        />
-        <Button
-          size="sm"
-          disabled={!newText.trim() || submitting}
-          onClick={handleSubmit}
-          className="cursor-pointer"
-        >
-          <Send className="h-3.5 w-3.5 mr-1" />
-          {submitting ? "Posting..." : "Post Comment"}
-        </Button>
-      </div>
+      {user ? (
+        <div className="space-y-2">
+          <textarea
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="Share your experience or feedback on this prompt..."
+            rows={3}
+            value={newText}
+            onChange={(e) => setNewText(e.target.value)}
+          />
+          <Button
+            size="sm"
+            disabled={!newText.trim() || submitting}
+            onClick={handleSubmit}
+            className="cursor-pointer"
+          >
+            <Send className="h-3.5 w-3.5 mr-1" />
+            {submitting ? "Posting..." : "Post Comment"}
+          </Button>
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground italic">Sign in to leave a comment.</p>
+      )}
     </div>
   )
 }

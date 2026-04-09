@@ -1,4 +1,6 @@
 import { ThumbsUp, ThumbsDown } from "lucide-react"
+import { toast } from "sonner"
+import { useAuth } from "@/contexts/AuthContext"
 import type { RatingInfo } from "@/hooks/useRatings"
 
 interface RatingButtonsProps {
@@ -14,8 +16,18 @@ function formatScore(net: number): string {
 }
 
 export function RatingButtons({ promptId, rating, onVote, size = "default" }: RatingButtonsProps) {
+  const { user } = useAuth()
   const iconSize = size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"
   const textSize = size === "sm" ? "text-xs" : "text-sm"
+
+  const handleVote = (e: React.MouseEvent, direction: "up" | "down") => {
+    e.stopPropagation()
+    if (!user) {
+      toast.info("Sign in to vote on prompts")
+      return
+    }
+    onVote(promptId, direction)
+  }
 
   return (
     <span className="inline-flex items-center gap-1.5">
@@ -25,10 +37,7 @@ export function RatingButtons({ promptId, rating, onVote, size = "default" }: Ra
             ? "text-emerald-500"
             : "text-muted-foreground hover:text-emerald-500"
         }`}
-        onClick={(e) => {
-          e.stopPropagation()
-          onVote(promptId, "up")
-        }}
+        onClick={(e) => handleVote(e, "up")}
       >
         <ThumbsUp
           className={`${iconSize} ${rating.userVote === "up" ? "fill-emerald-500" : ""}`}
@@ -43,10 +52,7 @@ export function RatingButtons({ promptId, rating, onVote, size = "default" }: Ra
             ? "text-red-500"
             : "text-muted-foreground hover:text-red-500"
         }`}
-        onClick={(e) => {
-          e.stopPropagation()
-          onVote(promptId, "down")
-        }}
+        onClick={(e) => handleVote(e, "down")}
       >
         <ThumbsDown
           className={`${iconSize} ${rating.userVote === "down" ? "fill-red-500" : ""}`}

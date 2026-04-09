@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { supabase } from "@/lib/supabase"
+import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "sonner"
 import type { UseCaseGroup } from "@/data/types"
 import {
   Library,
@@ -19,7 +21,6 @@ import {
   Code,
   Target,
   Palette,
-  Zap,
   Shield,
 } from "lucide-react"
 
@@ -67,6 +68,7 @@ export function Sidebar({
   onMyPrompts,
   isMyPromptsView,
 }: SidebarProps) {
+  const { user } = useAuth()
   const [pendingCount, setPendingCount] = useState(0)
 
   useEffect(() => {
@@ -88,14 +90,14 @@ export function Sidebar({
         {!collapsed ? (
           <div className="min-w-0 cursor-pointer" onClick={onGoHome}>
             <img
-              src="/fieldpulse-logo.svg"
+              src="/fp-logo.png"
               alt="FieldPulse"
               className="h-6 w-auto dark:invert"
             />
             <p className="text-[10px] text-muted-foreground mt-1">AI for the Field</p>
           </div>
         ) : (
-          <Zap className="h-5 w-5 text-primary shrink-0 mx-auto cursor-pointer" onClick={onGoHome} />
+          <img src="/fp-icon.png" alt="FP" className="h-6 w-6 shrink-0 mx-auto cursor-pointer dark:invert" onClick={onGoHome} />
         )}
         <Button
           variant="ghost"
@@ -155,7 +157,7 @@ export function Sidebar({
               "w-full justify-start cursor-pointer",
               collapsed && "justify-center px-2"
             )}
-            onClick={onShowFavorites}
+            onClick={() => { if (!user) { toast.info("Sign in to use favorites"); return } onShowFavorites() }}
           >
             <Heart className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="ml-2">My Favorites</span>}
@@ -168,7 +170,7 @@ export function Sidebar({
               "w-full justify-start cursor-pointer",
               collapsed && "justify-center px-2"
             )}
-            onClick={onMyPrompts}
+            onClick={() => { if (!user) { toast.info("Sign in to view your prompts"); return } onMyPrompts?.() }}
           >
             <FileText className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="ml-2">My Prompts</span>}
@@ -206,7 +208,7 @@ export function Sidebar({
             "w-full cursor-pointer",
             collapsed && "px-2"
           )}
-          onClick={onSubmitPrompt}
+          onClick={() => { if (!user) { toast.info("Sign in to submit a prompt"); return } onSubmitPrompt() }}
         >
           <Plus className="h-4 w-4 shrink-0" />
           {!collapsed && <span className="ml-2">Submit Prompt</span>}

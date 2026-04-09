@@ -32,7 +32,7 @@ export function LoginPage() {
         {/* Branding */}
         <div className="text-center space-y-2">
           <img
-            src="/fieldpulse-logo.svg"
+            src="/fp-logo.png"
             alt="FieldPulse"
             className="h-8 w-auto mx-auto dark:invert"
           />

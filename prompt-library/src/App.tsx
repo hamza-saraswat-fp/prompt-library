@@ -10,7 +10,7 @@ import { PromptTable } from "@/components/prompts/PromptTable"
 import { PromptDrawer } from "@/components/prompts/PromptDrawer"
 import { CategoryPills } from "@/components/prompts/CategoryPills"
 import { PromptBundle } from "@/components/prompts/PromptBundle"
-import { AuthGuard } from "@/components/auth/AuthGuard"
+import { Loader2 } from "lucide-react"
 import { HomePage } from "@/components/home/HomePage"
 import { SubmitPrompt } from "@/components/vision/SubmitPrompt"
 import { PromptPage } from "@/pages/PromptPage"
@@ -372,29 +372,25 @@ function App() {
 
   if (dataLoading) {
     return (
-      <AuthGuard>
-        <div className="flex h-screen items-center justify-center bg-background">
-          <div className="text-muted-foreground">Loading...</div>
-        </div>
-      </AuthGuard>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     )
   }
 
   if (dataError) {
     return (
-      <AuthGuard>
-        <div className="flex h-screen items-center justify-center bg-background">
-          <div className="text-center space-y-2">
-            <p className="text-lg font-medium text-destructive">Failed to load data</p>
-            <p className="text-sm text-muted-foreground">{dataError}</p>
-          </div>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="text-center space-y-2">
+          <p className="text-lg font-medium text-destructive">Failed to load data</p>
+          <p className="text-sm text-muted-foreground">{dataError}</p>
         </div>
-      </AuthGuard>
+      </div>
     )
   }
 
   return (
-    <AuthGuard>
+    <>
       <AppShell
         sidebar={
           <Sidebar
@@ -498,7 +494,7 @@ function App() {
 
       <SubmitPrompt open={submitOpen} onOpenChange={setSubmitOpen} />
       <Toaster position="bottom-right" />
-    </AuthGuard>
+    </>
   )
 }
 

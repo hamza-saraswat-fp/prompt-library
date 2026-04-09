@@ -21,10 +21,13 @@ import {
   Maximize2,
   X,
 } from "lucide-react"
+import { toast } from "sonner"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
+import { PromptContent } from "@/components/prompts/PromptContent"
 import { RatingButtons } from "@/components/prompts/RatingButtons"
+import { useAuth } from "@/contexts/AuthContext"
 import { getTagColor } from "@/lib/tag-colors"
-import { fillVariables, variableToLabel, segmentPromptText } from "@/lib/variables"
+import { fillVariables, variableToLabel } from "@/lib/variables"
 import type { Prompt } from "@/data/types"
 import type { RatingInfo } from "@/hooks/useRatings"
 
@@ -51,6 +54,7 @@ export function PromptDrawer({
   rating,
   onVote,
 }: PromptDrawerProps) {
+  const { user } = useAuth()
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [showVersionHistory, setShowVersionHistory] = useState(false)
 
@@ -63,8 +67,6 @@ export function PromptDrawer({
     if (!prompt) return ""
     return fillVariables(prompt.promptText, variableValues)
   }, [prompt, variableValues])
-
-  const segments = useMemo(() => segmentPromptText(filledText), [filledText])
 
   if (!prompt) return null
 
@@ -167,17 +169,7 @@ export function PromptDrawer({
             {/* Prompt text */}
             <div>
               <h4 className="text-sm font-medium mb-2">Prompt</h4>
-              <div className="rounded-md bg-muted p-6 text-sm font-mono whitespace-pre-wrap leading-relaxed">
-                {segments.map((seg) =>
-                  seg.isVariable ? (
-                    <span key={seg.key} className="rounded bg-primary/10 px-1 py-0.5 text-primary font-medium">
-                      {seg.text}
-                    </span>
-                  ) : (
-                    <span key={seg.key}>{seg.text}</span>
-                  )
-                )}
-              </div>
+              <PromptContent text={filledText} onCopy={onCopy} />
             </div>
 
             {/* Variable inputs */}
@@ -216,7 +208,7 @@ export function PromptDrawer({
         <div className="shrink-0 flex items-center gap-2 pt-4 border-t mt-4">
           <button
             className="shrink-0 cursor-pointer text-muted-foreground hover:text-red-500 transition-colors p-2 rounded-md hover:bg-muted"
-            onClick={onToggleFavorite}
+            onClick={() => { if (!user) { toast.info("Sign in to use favorites"); return } onToggleFavorite() }}
           >
             <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
           </button>

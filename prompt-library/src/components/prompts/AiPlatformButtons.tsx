@@ -17,7 +17,7 @@ interface CopyButtonProps {
 
 const platforms = [
   { label: "Open in ChatGPT", getUrl: (text: string) => `https://chatgpt.com/?q=${encodeURIComponent(text)}`, icon: ChatGPTIcon },
-  { label: "Open in Claude", getUrl: () => "https://claude.ai/new", icon: ClaudeIcon },
+  { label: "Open in Claude", getUrl: (text: string) => `https://claude.ai/new?q=${encodeURIComponent(text)}`, icon: ClaudeIcon },
   { label: "Open in Gemini", getUrl: () => "https://gemini.google.com/", icon: GeminiIcon },
 ]
 
@@ -27,6 +27,7 @@ export function CopyButton({ text, onCopy, size = "default", label = "Copy" }: C
   return (
     <div className="flex">
       <Button
+        variant="outline"
         className={`cursor-pointer rounded-r-none border-r-0 ${sizeClasses}`}
         onClick={(e) => {
           e.stopPropagation()
