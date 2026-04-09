@@ -21,11 +21,9 @@ import {
   Maximize2,
   X,
 } from "lucide-react"
-import { toast } from "sonner"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
 import { PromptContent } from "@/components/prompts/PromptContent"
 import { RatingButtons } from "@/components/prompts/RatingButtons"
-import { useAuth } from "@/contexts/AuthContext"
 import { getTagColor } from "@/lib/tag-colors"
 import { fillVariables, variableToLabel } from "@/lib/variables"
 import type { Prompt } from "@/data/types"
@@ -54,7 +52,6 @@ export function PromptDrawer({
   rating,
   onVote,
 }: PromptDrawerProps) {
-  const { user } = useAuth()
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [showVersionHistory, setShowVersionHistory] = useState(false)
 
@@ -208,7 +205,7 @@ export function PromptDrawer({
         <div className="shrink-0 flex items-center gap-2 pt-4 border-t mt-4">
           <button
             className="shrink-0 cursor-pointer text-muted-foreground hover:text-red-500 transition-colors p-2 rounded-md hover:bg-muted"
-            onClick={() => { if (!user) { toast.info("Sign in to use favorites"); return } onToggleFavorite() }}
+            onClick={onToggleFavorite}
           >
             <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
           </button>

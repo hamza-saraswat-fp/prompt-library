@@ -9,11 +9,9 @@ import {
   BarChart3,
   GitCommit,
 } from "lucide-react"
-import { toast } from "sonner"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
 import { PromptContent } from "@/components/prompts/PromptContent"
 import { RatingButtons } from "@/components/prompts/RatingButtons"
-import { useAuth } from "@/contexts/AuthContext"
 import { getTagColor } from "@/lib/tag-colors"
 import {
   fillVariables,
@@ -49,7 +47,6 @@ export function PromptDetailView({
   rating,
   onVote,
 }: PromptDetailViewProps) {
-  const { user } = useAuth()
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {}
   )
@@ -77,7 +74,7 @@ export function PromptDetailView({
         </div>
         <button
           className="shrink-0 cursor-pointer text-muted-foreground hover:text-red-500 transition-colors p-2 rounded-md hover:bg-muted"
-          onClick={() => { if (!user) { toast.info("Sign in to use favorites"); return } onToggleFavorite() }}
+          onClick={onToggleFavorite}
         >
           <Heart
             className={`h-6 w-6 ${isFavorite ? "fill-red-500 text-red-500" : ""}`}

@@ -5,8 +5,6 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { supabase } from "@/lib/supabase"
-import { useAuth } from "@/contexts/AuthContext"
-import { toast } from "sonner"
 import type { UseCaseGroup } from "@/data/types"
 import {
   Library,
@@ -68,7 +66,6 @@ export function Sidebar({
   onMyPrompts,
   isMyPromptsView,
 }: SidebarProps) {
-  const { user } = useAuth()
   const [pendingCount, setPendingCount] = useState(0)
 
   useEffect(() => {
@@ -157,7 +154,7 @@ export function Sidebar({
               "w-full justify-start cursor-pointer",
               collapsed && "justify-center px-2"
             )}
-            onClick={() => { if (!user) { toast.info("Sign in to use favorites"); return } onShowFavorites() }}
+            onClick={onShowFavorites}
           >
             <Heart className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="ml-2">My Favorites</span>}
@@ -170,7 +167,7 @@ export function Sidebar({
               "w-full justify-start cursor-pointer",
               collapsed && "justify-center px-2"
             )}
-            onClick={() => { if (!user) { toast.info("Sign in to view your prompts"); return } onMyPrompts?.() }}
+            onClick={onMyPrompts}
           >
             <FileText className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="ml-2">My Prompts</span>}
@@ -208,7 +205,7 @@ export function Sidebar({
             "w-full cursor-pointer",
             collapsed && "px-2"
           )}
-          onClick={() => { if (!user) { toast.info("Sign in to submit a prompt"); return } onSubmitPrompt() }}
+          onClick={onSubmitPrompt}
         >
           <Plus className="h-4 w-4 shrink-0" />
           {!collapsed && <span className="ml-2">Submit Prompt</span>}
