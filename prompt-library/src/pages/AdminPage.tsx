@@ -8,6 +8,7 @@ import { AdminSubmissionQueue } from "@/components/admin/AdminSubmissionQueue"
 import { AdminTagManager } from "@/components/admin/AdminTagManager"
 import { AdminCategoryManager } from "@/components/admin/AdminCategoryManager"
 import { AdminBundleManager } from "@/components/admin/AdminBundleManager"
+import { AdminUserManager } from "@/components/admin/AdminUserManager"
 import { useRatings } from "@/hooks/useRatings"
 import { useFavorites } from "@/hooks/useFavorites"
 import { toast } from "sonner"
@@ -81,9 +82,7 @@ export function AdminPage() {
         </TabsContent>
 
         <TabsContent value="users" className="mt-4">
-          <div className="flex items-center justify-center py-20 text-muted-foreground">
-            User management coming soon
-          </div>
+          <AdminUserManager />
         </TabsContent>
       </Tabs>
 
