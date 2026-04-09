@@ -5,6 +5,9 @@ import { useAuth } from "@/contexts/AuthContext"
 import { PromptDrawer } from "@/components/prompts/PromptDrawer"
 import { AdminPromptTable } from "@/components/admin/AdminPromptTable"
 import { AdminSubmissionQueue } from "@/components/admin/AdminSubmissionQueue"
+import { AdminTagManager } from "@/components/admin/AdminTagManager"
+import { AdminCategoryManager } from "@/components/admin/AdminCategoryManager"
+import { AdminBundleManager } from "@/components/admin/AdminBundleManager"
 import { useRatings } from "@/hooks/useRatings"
 import { useFavorites } from "@/hooks/useFavorites"
 import { toast } from "sonner"
@@ -61,15 +64,20 @@ export function AdminPage() {
         </TabsContent>
 
         <TabsContent value="tags" className="mt-4">
-          <div className="flex items-center justify-center py-20 text-muted-foreground">
-            Tags & Categories management coming soon
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Tags</h2>
+              <AdminTagManager />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Categories</h2>
+              <AdminCategoryManager />
+            </div>
           </div>
         </TabsContent>
 
         <TabsContent value="bundles" className="mt-4">
-          <div className="flex items-center justify-center py-20 text-muted-foreground">
-            Bundle management coming soon
-          </div>
+          <AdminBundleManager />
         </TabsContent>
 
         <TabsContent value="users" className="mt-4">

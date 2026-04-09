@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import {
   Dialog,
   DialogContent,
@@ -10,27 +11,34 @@ import { Button } from "@/components/ui/button"
 interface AdminDeleteDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  promptTitle: string
+  title?: string
+  description?: ReactNode
+  promptTitle?: string
   onConfirm: () => void
   deleting: boolean
+  confirmLabel?: string
 }
 
-export function AdminDeleteDialog({ open, onOpenChange, promptTitle, onConfirm, deleting }: AdminDeleteDialogProps) {
+export function AdminDeleteDialog({
+  open, onOpenChange, title, description, promptTitle, onConfirm, deleting, confirmLabel = "Delete",
+}: AdminDeleteDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Delete Prompt</DialogTitle>
+          <DialogTitle>{title ?? "Delete Prompt"}</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Are you sure you want to delete <span className="font-medium text-foreground">"{promptTitle}"</span>? This cannot be undone.
-        </p>
+        <div className="text-sm text-muted-foreground">
+          {description ?? (
+            <p>Are you sure you want to delete <span className="font-medium text-foreground">"{promptTitle}"</span>? This cannot be undone.</p>
+          )}
+        </div>
         <DialogFooter>
           <Button variant="outline" className="cursor-pointer" onClick={() => onOpenChange(false)} disabled={deleting}>
             Cancel
           </Button>
           <Button variant="destructive" className="cursor-pointer" onClick={onConfirm} disabled={deleting}>
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? "Deleting..." : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
