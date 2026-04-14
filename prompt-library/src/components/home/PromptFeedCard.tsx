@@ -1,10 +1,8 @@
 import { Badge } from "@/components/ui/badge"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
-import { RatingButtons } from "@/components/prompts/RatingButtons"
 import { Heart } from "lucide-react"
 import { getTagColor } from "@/lib/tag-colors"
 import type { Prompt } from "@/data/types"
-import type { RatingInfo } from "@/hooks/useRatings"
 
 const MAX_VISIBLE_TAGS = 3
 
@@ -30,8 +28,6 @@ interface PromptFeedCardProps {
   onToggleFavorite: () => void
   onCopy: (text: string) => void
   onInteraction?: (promptId: string) => void
-  rating: RatingInfo
-  onVote: (promptId: string, direction: "up" | "down") => void
 }
 
 export function PromptFeedCard({
@@ -41,8 +37,6 @@ export function PromptFeedCard({
   onToggleFavorite,
   onCopy,
   onInteraction,
-  rating,
-  onVote,
 }: PromptFeedCardProps) {
   const visibleTags = prompt.tags.slice(0, MAX_VISIBLE_TAGS)
   const overflowCount = prompt.tags.length - MAX_VISIBLE_TAGS
@@ -87,9 +81,6 @@ export function PromptFeedCard({
               +{overflowCount} more
             </Badge>
           )}
-        </div>
-        <div className="shrink-0">
-          <RatingButtons promptId={prompt.id} rating={rating} onVote={onVote} size="sm" />
         </div>
         <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
           <CopyButton text={prompt.promptText} onCopy={(text) => { onCopy(text); onInteraction?.(prompt.id) }} size="sm" label="Copy" />

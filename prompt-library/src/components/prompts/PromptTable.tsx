@@ -14,9 +14,9 @@ import type { Prompt, Category } from "@/data/types"
 interface PromptTableProps {
   prompts: Prompt[]
   onClick: (prompt: Prompt) => void
-  sortField: "title" | "rating" | null
+  sortField: "title" | null
   sortDirection: "asc" | "desc"
-  onSort: (field: "title" | "rating") => void
+  onSort: (field: "title") => void
   getCategoryById: (id: string) => Category | undefined
 }
 

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { PromptDetailView } from "@/components/prompts/PromptDetailView"
 import { supabase } from "@/lib/supabase"
 import { useFavorites } from "@/hooks/useFavorites"
-import { useRatings } from "@/hooks/useRatings"
 import { initTagColors } from "@/lib/tag-colors"
 import { toast } from "sonner"
 import { Link2, ArrowLeft, Loader2 } from "lucide-react"
@@ -38,7 +37,6 @@ export function PromptPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { isFavorite, toggleFavorite } = useFavorites()
-  const { getRating, vote } = useRatings()
 
   const [prompt, setPrompt] = useState<Prompt | null>(null)
   const [bundleSiblings, setBundleSiblings] = useState<Prompt[]>([])
@@ -164,8 +162,6 @@ export function PromptPage() {
         onOpenPrompt={(p) => navigate(`/prompts/${p.id}`)}
         isPromptFavorite={isFavorite}
         onTogglePromptFavorite={toggleFavorite}
-        rating={getRating(prompt.id)}
-        onVote={vote}
       />
     </div>
   )

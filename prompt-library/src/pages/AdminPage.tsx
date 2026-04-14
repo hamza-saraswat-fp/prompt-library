@@ -9,14 +9,12 @@ import { AdminTagManager } from "@/components/admin/AdminTagManager"
 import { AdminCategoryManager } from "@/components/admin/AdminCategoryManager"
 import { AdminBundleManager } from "@/components/admin/AdminBundleManager"
 import { AdminUserManager } from "@/components/admin/AdminUserManager"
-import { useRatings } from "@/hooks/useRatings"
 import { useFavorites } from "@/hooks/useFavorites"
 import { toast } from "sonner"
 import type { Prompt } from "@/data/types"
 
 export function AdminPage() {
   const { profile } = useAuth()
-  const { getRating, vote } = useRatings()
   const { isFavorite, toggleFavorite } = useFavorites()
   const [previewPrompt, setPreviewPrompt] = useState<Prompt | null>(null)
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -94,8 +92,6 @@ export function AdminPage() {
         isFavorite={previewPrompt ? isFavorite(previewPrompt.id) : false}
         onToggleFavorite={() => previewPrompt && toggleFavorite(previewPrompt.id)}
         onOpenFullView={() => setPreviewOpen(false)}
-        rating={previewPrompt ? getRating(previewPrompt.id) : { up: 0, down: 0, userVote: null, net: 0 }}
-        onVote={vote}
       />
     </div>
   )

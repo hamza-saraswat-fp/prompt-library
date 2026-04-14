@@ -20,14 +20,15 @@ import {
   ChevronUp,
   Maximize2,
   X,
+  Link2,
 } from "lucide-react"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
 import { PromptContent } from "@/components/prompts/PromptContent"
-import { RatingButtons } from "@/components/prompts/RatingButtons"
 import { getTagColor } from "@/lib/tag-colors"
-import { fillVariables, variableToLabel } from "@/lib/variables"
+import { fillVariables, variableToLabel, extractVariablesWithPlaceholders } from "@/lib/variables"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
+import { toast } from "sonner"
 import type { Prompt } from "@/data/types"
-import type { RatingInfo } from "@/hooks/useRatings"
 
 interface PromptDrawerProps {
   prompt: Prompt | null
@@ -37,8 +38,6 @@ interface PromptDrawerProps {
   isFavorite: boolean
   onToggleFavorite: () => void
   onOpenFullView: () => void
-  rating: RatingInfo
-  onVote: (promptId: string, direction: "up" | "down") => void
 }
 
 export function PromptDrawer({
@@ -49,8 +48,6 @@ export function PromptDrawer({
   isFavorite,
   onToggleFavorite,
   onOpenFullView,
-  rating,
-  onVote,
 }: PromptDrawerProps) {
   const [variableValues, setVariableValues] = useState<Record<string, string>>({})
   const [showVersionHistory, setShowVersionHistory] = useState(false)
@@ -64,6 +61,16 @@ export function PromptDrawer({
     if (!prompt) return ""
     return fillVariables(prompt.promptText, variableValues)
   }, [prompt, variableValues])
+
+  // Extract inline placeholders from prompt text; fall back to Variable.description
+  const inlinePlaceholders = useMemo(() => {
+    if (!prompt) return []
+    return extractVariablesWithPlaceholders(prompt.promptText)
+  }, [prompt])
+  const getPlaceholder = (v: { name: string; description: string }) => {
+    const inline = inlinePlaceholders.find((ip) => ip.name === v.name)
+    return inline?.placeholder || v.description || ""
+  }
 
   if (!prompt) return null
 
@@ -126,7 +133,6 @@ export function PromptDrawer({
                   Trending
                 </span>
               )}
-              <RatingButtons promptId={prompt.id} rating={rating} onVote={onVote} size="sm" />
               <span>by {prompt.author}</span>
             </div>
 
@@ -174,7 +180,16 @@ export function PromptDrawer({
               <>
                 <Separator />
                 <div>
-                  <h4 className="text-sm font-medium mb-3">Fill in Variables</h4>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger className="text-sm font-medium mb-3 cursor-help w-fit text-left">
+                        Fill in Variables
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        <p>Replace the placeholders with your own values</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <div className={`gap-3 ${prompt.variables.length >= 4 ? "grid grid-cols-2" : "space-y-3"}`}>
                     {prompt.variables.map((v) => (
                       <div key={v.name}>
@@ -183,7 +198,7 @@ export function PromptDrawer({
                         </label>
                         <Input
                           className="mt-1"
-                          placeholder={v.description}
+                          placeholder={getPlaceholder(v) || `Enter ${variableToLabel(v.name).toLowerCase()}...`}
                           value={variableValues[v.name] ?? ""}
                           onChange={(e) =>
                             setVariableValues((prev) => ({
@@ -209,6 +224,22 @@ export function PromptDrawer({
           >
             <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
           </button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="cursor-pointer shrink-0"
+            title="Share link"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(`${window.location.origin}/prompts/${prompt.id}`)
+                toast.success("Link copied to clipboard!")
+              } catch {
+                toast.error("Failed to copy link")
+              }
+            }}
+          >
+            <Link2 className="h-4 w-4" />
+          </Button>
           <Button
             variant="outline"
             className="cursor-pointer"

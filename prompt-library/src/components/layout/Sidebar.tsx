@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import { supabase } from "@/lib/supabase"
 import type { UseCaseGroup } from "@/data/types"
 import {
@@ -200,16 +201,23 @@ export function Sidebar({
 
       {/* Submit Button */}
       <div className="p-2">
-        <Button
-          className={cn(
-            "w-full cursor-pointer",
-            collapsed && "px-2"
-          )}
-          onClick={onSubmitPrompt}
-        >
-          <Plus className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="ml-2">Submit Prompt</span>}
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              className={cn(
+                "inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-medium h-10 w-full cursor-pointer hover:bg-primary/90 transition-colors",
+                collapsed && "px-2"
+              )}
+              onClick={onSubmitPrompt}
+            >
+              <Plus className="h-4 w-4 shrink-0" />
+              {!collapsed && <span className="ml-2">Submit Prompt</span>}
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Contribute a new prompt to the library</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </aside>
   )

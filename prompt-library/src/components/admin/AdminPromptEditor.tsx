@@ -15,7 +15,7 @@ import { toast } from "sonner"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/contexts/AuthContext"
 import { useSupabaseData } from "@/hooks/useSupabaseData"
-import { extractVariables } from "@/lib/variables"
+import { extractVariablesWithPlaceholders } from "@/lib/variables"
 import { AdminDeleteDialog } from "./AdminDeleteDialog"
 import type { Prompt, ModelType } from "@/data/types"
 
@@ -93,7 +93,8 @@ export function AdminPromptEditor({
     }
   }, [prompt, profile])
 
-  const detectedVars = extractVariables(promptText)
+  const detectedVarsWithPlaceholders = extractVariablesWithPlaceholders(promptText)
+  const detectedVars = detectedVarsWithPlaceholders.map((v) => v.name)
 
   const canSave = title.trim() && overview.trim() && promptText.trim() && categoryId
 
@@ -101,9 +102,9 @@ export function AdminPromptEditor({
     if (!canSave || !user) return
     setSaving(true)
 
-    const variables = detectedVars.map((name) => ({
+    const variables = detectedVarsWithPlaceholders.map(({ name, placeholder }) => ({
       name,
-      description: prompt?.variables.find((v) => v.name === name)?.description ?? "",
+      description: placeholder || prompt?.variables.find((v) => v.name === name)?.description || "",
     }))
 
     const row = {
@@ -217,7 +218,7 @@ export function AdminPromptEditor({
                 <label className="text-sm font-medium">Prompt Text</label>
                 <textarea
                   className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono min-h-[160px] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  value={promptText} onChange={(e) => setPromptText(e.target.value)} placeholder={"Use {{variable_name}} for fillable fields..."}
+                  value={promptText} onChange={(e) => setPromptText(e.target.value)} placeholder={"Use {{variable_name}} or {{variable_name | example value}} for fillable fields..."}
                 />
                 {detectedVars.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">

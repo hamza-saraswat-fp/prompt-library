@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { Search, X, Sun, Moon, Tag, Check, LayoutGrid, Table, ArrowUpDown } from "lucide-react"
+import { Search, X, Sun, Moon, Tag, Check, LayoutGrid, Table, ArrowUpDown, HelpCircle } from "lucide-react"
 import { UserMenu } from "@/components/auth/UserMenu"
 import type { Department } from "@/data/types"
 
@@ -23,9 +23,10 @@ interface HeaderProps {
   isDark: boolean
   onToggleTheme: () => void
   isHomeView?: boolean
-  sortField?: "title" | "rating" | null
-  onSort?: (field: "title" | "rating") => void
+  sortField?: "title" | null
+  onSort?: (field: "title") => void
   allTags?: string[]
+  onShowHelp?: () => void
 }
 
 export function Header({
@@ -41,6 +42,7 @@ export function Header({
   sortField,
   onSort,
   allTags = [],
+  onShowHelp,
 }: HeaderProps) {
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -73,8 +75,8 @@ export function Header({
         </div>
       )}
 
-      {/* Spacer when search is hidden */}
-      {isHomeView && <div className="flex-1" />}
+      {/* Spacer — pushes controls to right edge */}
+      <div className="flex-1" />
 
       {/* Tag Filter */}
       <DropdownMenu>
@@ -122,7 +124,7 @@ export function Header({
         <DropdownMenu>
           <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
             <ArrowUpDown className="h-4 w-4" />
-            {sortField === "title" ? "Title" : sortField === "rating" ? "Top Rated" : "Sort"}
+            {sortField === "title" ? "Title" : "Sort"}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem
@@ -140,15 +142,6 @@ export function Header({
               <div className="flex items-center gap-2 w-full">
                 {sortField === "title" && <Check className="h-3 w-3" />}
                 <span className={sortField === "title" ? "font-medium" : ""}>Title</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onSort("rating")}
-              className="cursor-pointer"
-            >
-              <div className="flex items-center gap-2 w-full">
-                {sortField === "rating" && <Check className="h-3 w-3" />}
-                <span className={sortField === "rating" ? "font-medium" : ""}>Top Rated</span>
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -177,6 +170,19 @@ export function Header({
             <Table className="h-4 w-4" />
           </Button>
         </div>
+      )}
+
+      {/* Help */}
+      {onShowHelp && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onShowHelp}
+          className="cursor-pointer"
+          title="How to use"
+        >
+          <HelpCircle className="h-4 w-4" />
+        </Button>
       )}
 
       {/* Theme Toggle */}

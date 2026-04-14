@@ -11,16 +11,15 @@ import {
 } from "lucide-react"
 import { CopyButton } from "@/components/prompts/AiPlatformButtons"
 import { PromptContent } from "@/components/prompts/PromptContent"
-import { RatingButtons } from "@/components/prompts/RatingButtons"
 import { getTagColor } from "@/lib/tag-colors"
 import {
   fillVariables,
   variableToLabel,
+  extractVariablesWithPlaceholders,
 } from "@/lib/variables"
 import { UseCaseShowcase } from "@/components/prompts/UseCaseShowcase"
 import { CommentsSection } from "@/components/prompts/CommentsSection"
 import type { Prompt } from "@/data/types"
-import type { RatingInfo } from "@/hooks/useRatings"
 
 interface PromptDetailViewProps {
   prompt: Prompt
@@ -31,8 +30,6 @@ interface PromptDetailViewProps {
   onOpenPrompt: (prompt: Prompt) => void
   isPromptFavorite: (id: string) => boolean
   onTogglePromptFavorite: (id: string) => void
-  rating: RatingInfo
-  onVote: (promptId: string, direction: "up" | "down") => void
 }
 
 export function PromptDetailView({
@@ -44,8 +41,6 @@ export function PromptDetailView({
   onOpenPrompt,
   isPromptFavorite,
   onTogglePromptFavorite,
-  rating,
-  onVote,
 }: PromptDetailViewProps) {
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {}
@@ -55,6 +50,16 @@ export function PromptDetailView({
     () => fillVariables(prompt.promptText, variableValues),
     [prompt, variableValues]
   )
+
+  // Extract inline placeholders from prompt text; fall back to Variable.description
+  const inlinePlaceholders = useMemo(
+    () => extractVariablesWithPlaceholders(prompt.promptText),
+    [prompt.promptText]
+  )
+  const getPlaceholder = (v: { name: string; description: string }) => {
+    const inline = inlinePlaceholders.find((ip) => ip.name === v.name)
+    return inline?.placeholder || v.description || ""
+  }
 
   const hasVariables = prompt.variables.length > 0
 
@@ -107,8 +112,6 @@ export function PromptDetailView({
           </>
         )}
         <span className="text-border">|</span>
-        <RatingButtons promptId={prompt.id} rating={rating} onVote={onVote} />
-        <span className="text-border">|</span>
         <span>by {prompt.author}</span>
         <span className="text-border">|</span>
         <span>Updated {prompt.updatedAt}</span>
@@ -138,7 +141,7 @@ export function PromptDetailView({
                       </label>
                       <Input
                         className="mt-1"
-                        placeholder={v.description}
+                        placeholder={getPlaceholder(v) || `Enter ${variableToLabel(v.name).toLowerCase()}...`}
                         value={variableValues[v.name] ?? ""}
                         onChange={(e) =>
                           setVariableValues((prev) => ({

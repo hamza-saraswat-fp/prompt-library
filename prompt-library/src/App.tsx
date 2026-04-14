@@ -17,10 +17,10 @@ import { SubmitPrompt } from "@/components/vision/SubmitPrompt"
 import { PromptPage } from "@/pages/PromptPage"
 import { AdminPage } from "@/pages/AdminPage"
 import { MyPrompts } from "@/components/prompts/MyPrompts"
+import { WelcomeModal, hasSeenOnboarding } from "@/components/onboarding/WelcomeModal"
 import { useTheme } from "@/hooks/useTheme"
 import { useFavorites } from "@/hooks/useFavorites"
 import { useRecentlyUsed } from "@/hooks/useRecentlyUsed"
-import { useRatings } from "@/hooks/useRatings"
 import { useSupabaseData } from "@/hooks/useSupabaseData"
 import { useAuth } from "@/contexts/AuthContext"
 import { initTagColors } from "@/lib/tag-colors"
@@ -58,9 +58,9 @@ function BrowsePage({
   handleOpenPrompt: (prompt: Prompt) => void
   isFavorite: (id: string) => boolean
   toggleFavorite: (id: string) => void
-  sortField: "title" | "rating" | null
+  sortField: "title" | null
   sortDirection: "asc" | "desc"
-  onSort: (field: "title" | "rating") => void
+  onSort: (field: "title") => void
   getCategoryById: (id: string) => { id: string; name: string; groupId: string } | undefined
 }) {
   return (
@@ -153,7 +153,6 @@ function App() {
   const { isDark, toggle: toggleTheme } = useTheme()
   const { favorites, toggleFavorite, isFavorite } = useFavorites()
   const { recentIds, addRecent } = useRecentlyUsed()
-  const { getRating, vote, getNetScore } = useRatings()
   const {
     prompts, groups, bundles, allTags, departments,
     loading: dataLoading, error: dataError,
@@ -173,7 +172,8 @@ function App() {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [submitOpen, setSubmitOpen] = useState(false)
-  const [sortField, setSortField] = useState<"title" | "rating" | null>(null)
+  const [welcomeOpen, setWelcomeOpen] = useState(() => !hasSeenOnboarding())
+  const [sortField, setSortField] = useState<"title" | null>(null)
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   const [activeView, setActiveView] = useState<"home" | "browse">("home")
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null)
@@ -326,19 +326,13 @@ function App() {
 
   const sortedPrompts = useMemo(() => {
     if (!sortField) return filteredPrompts
-    if (sortField === "rating") {
-      return [...filteredPrompts].sort((a, b) => {
-        const cmp = getNetScore(b.id) - getNetScore(a.id)
-        return sortDirection === "asc" ? cmp : -cmp
-      })
-    }
     return [...filteredPrompts].sort((a, b) => {
       const cmp = a.title.localeCompare(b.title)
       return sortDirection === "asc" ? cmp : -cmp
     })
-  }, [filteredPrompts, sortField, sortDirection, getNetScore])
+  }, [filteredPrompts, sortField, sortDirection])
 
-  const handleSort = (field: "title" | "rating") => {
+  const handleSort = (field: "title") => {
     if (sortField === field) {
       if (sortDirection === "asc") {
         setSortDirection("desc")
@@ -432,6 +426,7 @@ function App() {
             onSort={handleSort}
             isHomeView={activeView === "home"}
             allTags={allTags}
+            onShowHelp={() => setWelcomeOpen(true)}
           />
         }
       >
@@ -452,9 +447,10 @@ function App() {
                   toggleFavorite={toggleFavorite}
                   onCopy={handleCopy}
                   onInteraction={addRecent}
-                  getRating={getRating}
-                  onVote={vote}
                   getCategoryById={getCategoryById}
+                  allTags={allTags}
+                  selectedTags={selectedTags}
+                  onTagChange={setSelectedTags}
                 />
               ) : (
                 <BrowsePage
@@ -493,11 +489,10 @@ function App() {
         isFavorite={selectedPrompt ? isFavorite(selectedPrompt.id) : false}
         onToggleFavorite={() => selectedPrompt && toggleFavorite(selectedPrompt.id)}
         onOpenFullView={handleOpenFullView}
-        rating={selectedPrompt ? getRating(selectedPrompt.id) : { up: 0, down: 0, userVote: null, net: 0 }}
-        onVote={vote}
       />
 
       <SubmitPrompt open={submitOpen} onOpenChange={setSubmitOpen} />
+      <WelcomeModal open={welcomeOpen} onOpenChange={setWelcomeOpen} />
       <Toaster position="bottom-right" />
     </AuthGuard>
   )
