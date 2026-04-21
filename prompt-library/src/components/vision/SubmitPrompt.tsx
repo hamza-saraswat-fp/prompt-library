@@ -70,7 +70,7 @@ export function SubmitPrompt({ open, onOpenChange }: SubmitPromptProps) {
     const variables = extractVariables(promptText).map((name) => ({ name, description: "" }))
     const authorName = profile?.display_name ?? "Anonymous"
 
-    const { error } = await supabase.from("prompts").insert({
+    const { error } = await supabase.from("pl_prompts").insert({
       id: generateId(title),
       title: title.trim(),
       overview: overview.trim(),

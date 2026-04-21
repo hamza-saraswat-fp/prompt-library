@@ -74,9 +74,9 @@ export function AdminUserManager() {
     setActivity(null)
 
     const [promptsRes, commentsRes, ratingsRes] = await Promise.all([
-      supabase.from("prompts").select("id, title, status").eq("created_by", profile.id).order("created_at", { ascending: false }),
-      supabase.from("comments").select("id, prompt_id, text, created_at").eq("user_id", profile.id).order("created_at", { ascending: false }).limit(20),
-      supabase.from("user_ratings").select("prompt_id", { count: "exact", head: true }).eq("user_id", profile.id),
+      supabase.from("pl_prompts").select("id, title, status").eq("created_by", profile.id).order("created_at", { ascending: false }),
+      supabase.from("pl_comments").select("id, prompt_id, text, created_at").eq("user_id", profile.id).order("created_at", { ascending: false }).limit(20),
+      supabase.from("pl_user_ratings").select("prompt_id", { count: "exact", head: true }).eq("user_id", profile.id),
     ])
 
     setActivity({

@@ -75,7 +75,7 @@ Format your response as the raw prompt text I can copy and paste directly into t
 }
 
 async function main() {
-  const { error } = await supabase.from("prompts").upsert([metaPrompt], { onConflict: "id" })
+  const { error } = await supabase.from("pl_prompts").upsert([metaPrompt], { onConflict: "id" })
 
   if (error) {
     console.error("Failed to seed meta-prompt:", error.message)

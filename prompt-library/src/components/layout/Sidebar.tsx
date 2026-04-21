@@ -71,7 +71,7 @@ export function Sidebar({
 
   useEffect(() => {
     if (!isAdmin) return
-    supabase.from("prompts").select("id", { count: "exact", head: true })
+    supabase.from("pl_prompts").select("id", { count: "exact", head: true })
       .eq("status", "pending_review")
       .then(({ count }) => setPendingCount(count ?? 0))
   }, [isAdmin])

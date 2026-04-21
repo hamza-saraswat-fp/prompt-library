@@ -47,13 +47,13 @@ export function PromptPage() {
       if (!id) return
 
       // Init tag colors
-      const { data: tags } = await supabase.from("tags").select("id, type")
+      const { data: tags } = await supabase.from("pl_tags").select("id, type")
       if (tags) {
         initTagColors(tags.filter((t) => t.type === "department").map((t) => t.id))
       }
 
       const { data, error } = await supabase
-        .from("prompts")
+        .from("pl_prompts")
         .select("*")
         .eq("id", id)
         .single()
@@ -70,7 +70,7 @@ export function PromptPage() {
       // Fetch bundle siblings if this prompt is in a bundle
       if (p.bundleId) {
         const { data: siblings } = await supabase
-          .from("prompts")
+          .from("pl_prompts")
           .select("*")
           .eq("bundle_id", p.bundleId)
           .neq("id", p.id)

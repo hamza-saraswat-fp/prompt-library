@@ -28,8 +28,8 @@ export function AdminTagManager() {
 
   const fetchData = useCallback(async () => {
     const [tagsRes, promptsRes] = await Promise.all([
-      supabase.from("tags").select("*").order("id"),
-      supabase.from("prompts").select("tags"),
+      supabase.from("pl_tags").select("*").order("id"),
+      supabase.from("pl_prompts").select("tags"),
     ])
     if (tagsRes.data) setTags(tagsRes.data as TagRow[])
     if (promptsRes.data) setPromptTags(promptsRes.data.map((p: { tags: string[] }) => p.tags ?? []))
@@ -44,7 +44,7 @@ export function AdminTagManager() {
     const name = newName.trim()
     if (!name) return
     setAdding(true)
-    const { error } = await supabase.from("tags").insert({ id: name, type: newType })
+    const { error } = await supabase.from("pl_tags").insert({ id: name, type: newType })
     setAdding(false)
     if (error) { toast.error("Failed to add tag: " + error.message); return }
     toast.success(`Tag "${name}" added`)
@@ -54,7 +54,7 @@ export function AdminTagManager() {
 
   const handleToggleType = async (tag: TagRow) => {
     const newTagType = tag.type === "department" ? "workflow" : "department"
-    const { error } = await supabase.from("tags").update({ type: newTagType }).eq("id", tag.id)
+    const { error } = await supabase.from("pl_tags").update({ type: newTagType }).eq("id", tag.id)
     if (error) { toast.error("Failed to update: " + error.message); return }
     setTags((prev) => prev.map((t) => t.id === tag.id ? { ...t, type: newTagType } : t))
   }
@@ -62,7 +62,7 @@ export function AdminTagManager() {
   const handleDelete = async () => {
     if (!deleteTag) return
     setDeleting(true)
-    const { error } = await supabase.from("tags").delete().eq("id", deleteTag.id)
+    const { error } = await supabase.from("pl_tags").delete().eq("id", deleteTag.id)
     setDeleting(false)
     if (error) { toast.error("Failed to delete: " + error.message); return }
     toast.success(`Tag "${deleteTag.id}" deleted`)

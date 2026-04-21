@@ -43,7 +43,7 @@ export function AdminSubmissionQueue({ onCountChange }: AdminSubmissionQueueProp
 
   const fetchSubmissions = useCallback(async () => {
     const { data, error } = await supabase
-      .from("prompts")
+      .from("pl_prompts")
       .select("*")
       .eq("status", "pending_review")
       .order("created_at", { ascending: true })

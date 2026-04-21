@@ -39,9 +39,9 @@ export function AdminCategoryManager() {
 
   const fetchData = useCallback(async () => {
     const [catsRes, groupsRes, promptsRes] = await Promise.all([
-      supabase.from("categories").select("*").order("name"),
-      supabase.from("use_case_groups").select("id, name").order("sort_order"),
-      supabase.from("prompts").select("category_id"),
+      supabase.from("pl_categories").select("*").order("name"),
+      supabase.from("pl_use_case_groups").select("id, name").order("sort_order"),
+      supabase.from("pl_prompts").select("category_id"),
     ])
     if (catsRes.data) setCategories(catsRes.data as CategoryRow[])
     if (groupsRes.data) {
@@ -67,7 +67,7 @@ export function AdminCategoryManager() {
     if (!name || !newGroupId) return
     setAdding(true)
     const id = generateId(name)
-    const { error } = await supabase.from("categories").insert({ id, name, group_id: newGroupId })
+    const { error } = await supabase.from("pl_categories").insert({ id, name, group_id: newGroupId })
     setAdding(false)
     if (error) { toast.error("Failed to add: " + error.message); return }
     toast.success(`Category "${name}" added`)
@@ -78,7 +78,7 @@ export function AdminCategoryManager() {
   const handleRename = async (catId: string) => {
     const name = editName.trim()
     if (!name) { setEditingId(null); return }
-    const { error } = await supabase.from("categories").update({ name }).eq("id", catId)
+    const { error } = await supabase.from("pl_categories").update({ name }).eq("id", catId)
     if (error) { toast.error("Failed to rename: " + error.message); return }
     setCategories((prev) => prev.map((c) => c.id === catId ? { ...c, name } : c))
     setEditingId(null)
@@ -88,7 +88,7 @@ export function AdminCategoryManager() {
   const handleDelete = async () => {
     if (!deleteCat) return
     setDeleting(true)
-    const { error } = await supabase.from("categories").delete().eq("id", deleteCat.id)
+    const { error } = await supabase.from("pl_categories").delete().eq("id", deleteCat.id)
     setDeleting(false)
     if (error) { toast.error("Failed to delete: " + error.message); return }
     toast.success(`Category "${deleteCat.name}" deleted`)

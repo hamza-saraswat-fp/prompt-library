@@ -49,7 +49,7 @@ export function AdminPromptTable({ onPreview }: AdminPromptTableProps) {
 
   const fetchPrompts = useCallback(async () => {
     const { data, error } = await supabase
-      .from("prompts")
+      .from("pl_prompts")
       .select("*")
       .order("updated_at", { ascending: false })
 

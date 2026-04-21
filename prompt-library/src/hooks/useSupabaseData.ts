@@ -77,11 +77,11 @@ export function useSupabaseData(): SupabaseData {
       try {
         // Fetch all tables in parallel
         const [groupsRes, catsRes, tagsRes, bundlesRes, promptsRes] = await Promise.all([
-          supabase.from("use_case_groups").select("*").order("sort_order"),
-          supabase.from("categories").select("*"),
-          supabase.from("tags").select("*"),
-          supabase.from("bundles").select("*").order("sort_order"),
-          supabase.from("prompts").select("*"),
+          supabase.from("pl_use_case_groups").select("*").order("sort_order"),
+          supabase.from("pl_categories").select("*"),
+          supabase.from("pl_tags").select("*"),
+          supabase.from("pl_bundles").select("*").order("sort_order"),
+          supabase.from("pl_prompts").select("*"),
         ])
 
         if (groupsRes.error) throw groupsRes.error

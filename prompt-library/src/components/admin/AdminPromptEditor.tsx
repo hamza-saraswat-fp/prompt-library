@@ -127,7 +127,7 @@ export function AdminPromptEditor({
 
     let error
     if (isCreate) {
-      const res = await supabase.from("prompts").insert({
+      const res = await supabase.from("pl_prompts").insert({
         ...row,
         id: generateId(title),
         created_by: user.id,
@@ -137,7 +137,7 @@ export function AdminPromptEditor({
       })
       error = res.error
     } else {
-      const res = await supabase.from("prompts").update(row).eq("id", prompt.id)
+      const res = await supabase.from("pl_prompts").update(row).eq("id", prompt.id)
       error = res.error
     }
 
@@ -154,7 +154,7 @@ export function AdminPromptEditor({
   const handleDelete = async () => {
     if (!prompt) return
     setDeleting(true)
-    const { error } = await supabase.from("prompts").delete().eq("id", prompt.id)
+    const { error } = await supabase.from("pl_prompts").delete().eq("id", prompt.id)
     setDeleting(false)
     if (error) {
       toast.error("Failed to delete: " + error.message)

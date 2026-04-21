@@ -53,8 +53,8 @@ export function AdminBundleManager() {
 
   const fetchData = useCallback(async () => {
     const [bundlesRes, promptsRes] = await Promise.all([
-      supabase.from("bundles").select("*").order("sort_order"),
-      supabase.from("prompts").select("id, title, bundle_id").order("title"),
+      supabase.from("pl_bundles").select("*").order("sort_order"),
+      supabase.from("pl_prompts").select("id, title, bundle_id").order("title"),
     ])
     if (bundlesRes.data) setBundles(bundlesRes.data as BundleRow[])
     if (promptsRes.data) setPrompts(promptsRes.data as PromptRow[])
@@ -101,10 +101,10 @@ export function AdminBundleManager() {
     // Save bundle row
     let error
     if (isCreate) {
-      const res = await supabase.from("bundles").insert({ id: bundleId, name: name.trim(), description: description.trim() || null, sort_order: sortOrder })
+      const res = await supabase.from("pl_bundles").insert({ id: bundleId, name: name.trim(), description: description.trim() || null, sort_order: sortOrder })
       error = res.error
     } else {
-      const res = await supabase.from("bundles").update({ name: name.trim(), description: description.trim() || null, sort_order: sortOrder }).eq("id", bundleId)
+      const res = await supabase.from("pl_bundles").update({ name: name.trim(), description: description.trim() || null, sort_order: sortOrder }).eq("id", bundleId)
       error = res.error
     }
 
@@ -116,10 +116,10 @@ export function AdminBundleManager() {
     const toRemove = [...previousIds].filter((id) => !selectedPromptIds.has(id))
 
     if (toAdd.length > 0) {
-      await supabase.from("prompts").update({ bundle_id: bundleId }).in("id", toAdd)
+      await supabase.from("pl_prompts").update({ bundle_id: bundleId }).in("id", toAdd)
     }
     if (toRemove.length > 0) {
-      await supabase.from("prompts").update({ bundle_id: null }).in("id", toRemove)
+      await supabase.from("pl_prompts").update({ bundle_id: null }).in("id", toRemove)
     }
 
     setSaving(false)
@@ -132,8 +132,8 @@ export function AdminBundleManager() {
     if (!deleteBundle) return
     setDeleting(true)
     // Clear bundle_id from associated prompts first
-    await supabase.from("prompts").update({ bundle_id: null }).eq("bundle_id", deleteBundle.id)
-    const { error } = await supabase.from("bundles").delete().eq("id", deleteBundle.id)
+    await supabase.from("pl_prompts").update({ bundle_id: null }).eq("bundle_id", deleteBundle.id)
+    const { error } = await supabase.from("pl_bundles").delete().eq("id", deleteBundle.id)
     setDeleting(false)
     if (error) { toast.error("Failed to delete: " + error.message); return }
     toast.success(`Bundle "${deleteBundle.name}" deleted`)

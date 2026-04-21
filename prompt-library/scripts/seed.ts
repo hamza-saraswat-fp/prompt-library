@@ -40,7 +40,7 @@ for (const b of bundles) {
 
 async function seed() {
   console.log("Seeding use_case_groups...")
-  const { error: groupErr } = await supabase.from("use_case_groups").upsert(
+  const { error: groupErr } = await supabase.from("pl_use_case_groups").upsert(
     useCaseGroups.map((g, i) => ({
       id: g.id,
       name: g.name,
@@ -52,7 +52,7 @@ async function seed() {
   console.log(`  ✓ ${useCaseGroups.length} groups`)
 
   console.log("Seeding categories...")
-  const { error: catErr } = await supabase.from("categories").upsert(
+  const { error: catErr } = await supabase.from("pl_categories").upsert(
     categories.map((c) => ({
       id: c.id,
       name: c.name,
@@ -63,12 +63,12 @@ async function seed() {
   console.log(`  ✓ ${categories.length} categories`)
 
   console.log("Seeding tags...")
-  const { error: tagErr } = await supabase.from("tags").upsert(ALL_TAGS)
+  const { error: tagErr } = await supabase.from("pl_tags").upsert(ALL_TAGS)
   if (tagErr) throw tagErr
   console.log(`  ✓ ${ALL_TAGS.length} tags`)
 
   console.log("Seeding bundles...")
-  const { error: bundleErr } = await supabase.from("bundles").upsert(
+  const { error: bundleErr } = await supabase.from("pl_bundles").upsert(
     bundles.map((b, i) => ({
       id: b.id,
       name: b.name,
@@ -105,7 +105,7 @@ async function seed() {
     updated_at: p.updatedAt,
   }))
 
-  const { error: promptErr } = await supabase.from("prompts").upsert(rows)
+  const { error: promptErr } = await supabase.from("pl_prompts").upsert(rows)
   if (promptErr) throw promptErr
   console.log(`  ✓ ${rows.length} prompts`)
 
