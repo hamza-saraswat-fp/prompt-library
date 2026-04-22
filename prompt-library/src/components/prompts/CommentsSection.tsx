@@ -25,7 +25,7 @@ export function CommentsSection({ promptId }: CommentsSectionProps) {
 
   useEffect(() => {
     supabase
-      .from("comments")
+      .from("pl_comments")
       .select("id, prompt_id, user_id, text, created_at, profiles(display_name)")
       .eq("prompt_id", promptId)
       .order("created_at", { ascending: false })
@@ -43,7 +43,7 @@ export function CommentsSection({ promptId }: CommentsSectionProps) {
     setSubmitting(true)
 
     const { data, error } = await supabase
-      .from("comments")
+      .from("pl_comments")
       .insert({ prompt_id: promptId, user_id: user.id, text: newText.trim() })
       .select("id, prompt_id, user_id, text, created_at, profiles(display_name)")
       .single()
@@ -60,7 +60,7 @@ export function CommentsSection({ promptId }: CommentsSectionProps) {
   }
 
   const handleDelete = async (commentId: string) => {
-    const { error } = await supabase.from("comments").delete().eq("id", commentId)
+    const { error } = await supabase.from("pl_comments").delete().eq("id", commentId)
     if (error) {
       console.error("Failed to delete comment:", error)
       return

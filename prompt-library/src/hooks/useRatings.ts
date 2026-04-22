@@ -21,8 +21,8 @@ export function useRatings() {
 
     // Fetch user's own votes + aggregates in parallel
     Promise.all([
-      supabase.from("user_ratings").select("prompt_id, vote").eq("user_id", user.id),
-      supabase.from("prompt_ratings_summary").select("*"),
+      supabase.from("pl_user_ratings").select("prompt_id, vote").eq("user_id", user.id),
+      supabase.from("pl_prompt_ratings_summary").select("*"),
     ]).then(([votesRes, aggRes]) => {
       if (votesRes.data) {
         const votes: Record<string, VoteDirection> = {}
@@ -69,7 +69,7 @@ export function useRatings() {
           const agg = prev[promptId] ?? { up: 0, down: 0 }
           return { ...prev, [promptId]: { ...agg, [direction]: Math.max(0, agg[direction] - 1) } }
         })
-        supabase.from("user_ratings").delete().eq("user_id", user.id).eq("prompt_id", promptId)
+        supabase.from("pl_user_ratings").delete().eq("user_id", user.id).eq("prompt_id", promptId)
           .then(({ error }) => { if (error) console.error("Failed to delete vote:", error) })
       } else if (currentVote === null) {
         // New vote — insert
@@ -78,7 +78,7 @@ export function useRatings() {
           const agg = prev[promptId] ?? { up: 0, down: 0 }
           return { ...prev, [promptId]: { ...agg, [direction]: agg[direction] + 1 } }
         })
-        supabase.from("user_ratings").insert({ user_id: user.id, prompt_id: promptId, vote: direction })
+        supabase.from("pl_user_ratings").insert({ user_id: user.id, prompt_id: promptId, vote: direction })
           .then(({ error }) => { if (error) console.error("Failed to insert vote:", error) })
       } else {
         // Switch vote — update
@@ -93,7 +93,7 @@ export function useRatings() {
             } as { up: number; down: number },
           }
         })
-        supabase.from("user_ratings").update({ vote: direction, updated_at: new Date().toISOString() })
+        supabase.from("pl_user_ratings").update({ vote: direction, updated_at: new Date().toISOString() })
           .eq("user_id", user.id).eq("prompt_id", promptId)
           .then(({ error }) => { if (error) console.error("Failed to update vote:", error) })
       }

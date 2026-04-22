@@ -59,7 +59,7 @@ export function MyPrompts() {
   useEffect(() => {
     if (!user) return
     supabase
-      .from("prompts")
+      .from("pl_prompts")
       .select("*")
       .eq("created_by", user.id)
       .order("created_at", { ascending: false })

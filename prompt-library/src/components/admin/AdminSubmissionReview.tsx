@@ -37,7 +37,7 @@ export function AdminSubmissionReview({ prompt, open, onOpenChange, onActionComp
 
   const handleApprove = async () => {
     setProcessing(true)
-    const { error } = await supabase.from("prompts").update({
+    const { error } = await supabase.from("pl_prompts").update({
       status: "published",
       visibility: "public",
       rejection_feedback: null,
@@ -52,7 +52,7 @@ export function AdminSubmissionReview({ prompt, open, onOpenChange, onActionComp
   const handleReject = async () => {
     if (!feedback.trim()) { toast.error("Please provide feedback"); return }
     setProcessing(true)
-    const { error } = await supabase.from("prompts").update({
+    const { error } = await supabase.from("pl_prompts").update({
       status: "rejected",
       rejection_feedback: feedback.trim(),
     }).eq("id", prompt.id)
