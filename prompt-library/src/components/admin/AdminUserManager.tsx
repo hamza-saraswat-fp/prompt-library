@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext"
 
 interface ProfileRow {
   id: string
+  email: string
   display_name: string | null
   department: string | null
   role: string
@@ -109,6 +110,7 @@ export function AdminUserManager() {
             <TableHeader>
               <TableRow>
                 <TableHead>Display Name</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead>Department</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Joined</TableHead>
@@ -117,10 +119,11 @@ export function AdminUserManager() {
             </TableHeader>
             <TableBody>
               {users.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No users</TableCell></TableRow>
               ) : users.map((u) => (
                 <TableRow key={u.id} className="cursor-pointer hover:bg-muted/50" onClick={() => openDetail(u)}>
                   <TableCell className="font-medium">{u.display_name ?? "—"}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm">{u.email}</TableCell>
                   <TableCell className="text-muted-foreground">{u.department ?? "—"}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={`text-xs ${roleBadge(u.role)}`}>
@@ -149,6 +152,10 @@ export function AdminUserManager() {
               <div className="px-6 pb-6 space-y-5 mt-4">
                 {/* Profile info */}
                 <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Email</span>
+                    <span className="text-sm">{detailUser.email}</span>
+                  </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Role</span>
                     <div className="flex items-center gap-2">
